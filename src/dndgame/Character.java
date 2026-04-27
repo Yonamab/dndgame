@@ -1,3 +1,14 @@
+/**
+ * Project: Dice Realms: Shadow Dungeon
+ * Author: Yonathan Abaineh Munshea
+ * Course: Object Oriented Programming
+ * Instructor: Prof. Salvatore Distefano
+ * Date: [Submission Date]
+ *
+ * Description:
+ * This class represents a base character in the game.
+ * It stores common attributes such as name, health, and armor.
+ */
 package dndgame;
 
 public class Character {
