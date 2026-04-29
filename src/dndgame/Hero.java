@@ -6,8 +6,8 @@
  * Date: [Submission Date]
  *
  * Description:
- * This class represents the player controlled hero.
- * It extends the Character class and adds level and experience.
+ * This class represents the player-controlled hero.
+ * It extends Character and provides common hero features.
  */
 package dndgame;
 
@@ -15,11 +15,13 @@ public class Hero extends Character {
 
     private int level;
     private int experience;
+    private Inventory inventory;
 
-    public Hero(String name, int maxHealth, int armorClass) {
-        super(name, maxHealth, armorClass); // calls Character constructor
+    public Hero(String name, int maxHealth, int armorClass, int attackBonus, int damageBonus) {
+        super(name, maxHealth, armorClass, attackBonus, damageBonus);
         this.level = 1;
         this.experience = 0;
+        this.inventory = new Inventory();
     }
 
     public int getLevel() {
@@ -36,7 +38,17 @@ public class Hero extends Character {
         if (experience >= 100) {
             level++;
             experience = 0;
+
+            increaseAttackBonus();
+
             System.out.println(getName() + " leveled up to level " + level);
         }
+    }
+
+    public int attack(Dice dice) {
+        return dice.roll(8) + getDamageBonus();
+    }
+    public Inventory getInventory() {
+        return inventory;
     }
 }

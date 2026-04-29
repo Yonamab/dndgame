@@ -17,12 +17,16 @@ public class Character {
     private int maxHealth;
     private int currentHealth;
     private int armorClass;
+    private int attackBonus;
+    private int damageBonus;
 
-    public Character(String name, int maxHealth, int armorClass) {
+    public Character(String name, int maxHealth, int armorClass, int attackBonus, int damageBonus) {
         this.name = name;
         this.maxHealth = maxHealth;
         this.currentHealth = maxHealth;
         this.armorClass = armorClass;
+        this.attackBonus = attackBonus;
+        this.damageBonus = damageBonus;
     }
 
     public String getName() {
@@ -35,6 +39,16 @@ public class Character {
 
     public int getArmorClass() {
         return armorClass;
+    }
+
+    public int getAttackBonus() {
+        return attackBonus;
+    }
+    public void increaseAttackBonus() {
+    attackBonus++;
+    }
+    public int getDamageBonus() {
+        return damageBonus;
     }
 
     public void takeDamage(int damage) {

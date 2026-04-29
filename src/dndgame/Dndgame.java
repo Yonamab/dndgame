@@ -16,15 +16,15 @@ public class Dndgame {
     public static void main(String[] args) {
                Dice dice = new Dice();
 
-        System.out.println("D20 roll: " + dice.roll(20));
-        System.out.println("D6 roll: " + dice.roll(6));
-        System.out.println("D8 roll: " + dice.roll(8));
+        Hero warrior = new Warrior("Aldric");
+        Hero mage = new Mage("Merlin");
+        Hero archer = new Archer("Robin");
+        Hero rogue = new Rogue("Shade");
 
-        try {
-            System.out.println(dice.roll(0));
-        } catch (IllegalArgumentException ex) {
-            System.out.println("Error: " + ex.getMessage());
-        }
+        System.out.println("Warrior damage: " + warrior.attack(dice));
+        System.out.println("Mage damage: " + mage.attack(dice));
+        System.out.println("Archer damage: " + archer.attack(dice));
+        System.out.println("Rogue damage: " + rogue.attack(dice));
 
     }
     
