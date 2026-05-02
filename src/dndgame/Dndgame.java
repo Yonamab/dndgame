@@ -14,17 +14,31 @@ public class Dndgame {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-               Dice dice = new Dice();
+               Hero hero = new Warrior("Aldric");
 
-        Hero warrior = new Warrior("Aldric");
-        Hero mage = new Mage("Merlin");
-        Hero archer = new Archer("Robin");
-        Hero rogue = new Rogue("Shade");
+        hero.getInventory().addItem(new Potion());
+        hero.getInventory().addItem(new Potion());
 
-        System.out.println("Warrior damage: " + warrior.attack(dice));
-        System.out.println("Mage damage: " + mage.attack(dice));
-        System.out.println("Archer damage: " + archer.attack(dice));
-        System.out.println("Rogue damage: " + rogue.attack(dice));
+        System.out.println("Inventory before using potion:");
+        hero.getInventory().showItems();
+
+        hero.takeDamage(50);
+        System.out.println("HP after damage: " + hero.getCurrentHealth());
+
+        Potion potion = hero.getInventory().getPotion();
+
+        if (potion != null) {
+            potion.use(hero);
+            hero.getInventory().removeItem(potion);
+        } else {
+            System.out.println("No potion available.");
+        }
+
+        System.out.println("HP after potion: " + hero.getCurrentHealth());
+
+        System.out.println("Inventory after using potion:");
+        hero.getInventory().showItems();
+    
 
     }
     

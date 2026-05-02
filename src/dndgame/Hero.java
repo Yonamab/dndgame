@@ -15,12 +15,14 @@ public class Hero extends Character {
 
     private int level;
     private int experience;
+    private int gold;
     private Inventory inventory;
 
     public Hero(String name, int maxHealth, int armorClass, int attackBonus, int damageBonus) {
         super(name, maxHealth, armorClass, attackBonus, damageBonus);
         this.level = 1;
         this.experience = 0;
+        this.gold = 25;
         this.inventory = new Inventory();
     }
 
@@ -48,7 +50,24 @@ public class Hero extends Character {
     public int attack(Dice dice) {
         return dice.roll(8) + getDamageBonus();
     }
+    
     public Inventory getInventory() {
         return inventory;
+    }
+    
+    public int getGold() {
+        return gold;
+    }
+
+    public void addGold(int amount) {
+        gold += amount;
+    }
+
+    public void spendGold(int amount) {
+        if (gold < amount) {
+            throw new IllegalStateException("Not enough gold.");
+        }
+
+        gold -= amount;
     }
 }

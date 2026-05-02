@@ -2,7 +2,7 @@
  * Project: Dice Realms: Shadow Dungeon
  * Author: Yonathan Abaineh Munshea
  * Course: Object Oriented Programming
- * Instructor: Salvatore Distefano
+ * Instructor: Prof. Salvatore Distefano
  * Date: [Submission Date]
  *
  * Description:
@@ -29,8 +29,27 @@ public class Inventory {
     }
 
     public void showItems() {
+        if (items.isEmpty()) {
+            System.out.println("Inventory is empty.");
+            return;
+        }
+
         for (Item item : items) {
             System.out.println("- " + item.getName());
         }
+    }
+
+    public Potion getPotion() {
+        for (Item item : items) {
+            if (item instanceof Potion) {
+                return (Potion) item;
+            }
+        }
+
+        return null;
+    }
+
+    public void removeItem(Item item) {
+        items.remove(item);
     }
 }

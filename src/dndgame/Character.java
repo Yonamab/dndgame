@@ -55,10 +55,20 @@ public class Character {
         currentHealth -= damage;
         if (currentHealth < 0) {
             currentHealth = 0;
+        }    
+    }
+     public void heal(int amount) {
+        currentHealth += amount;
+
+        if (currentHealth > maxHealth) {
+            currentHealth = maxHealth;
         }
     }
 
     public boolean isAlive() {
         return currentHealth > 0;
+    }
+    public boolean isFullHealth() {
+        return currentHealth == maxHealth;
     }
 }
