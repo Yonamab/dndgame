@@ -18,6 +18,8 @@ public class Game {
     private CombatManager combatManager;
     private Shop shop;
     private int roomNumber;
+    private boolean bossUnlocked;
+    private boolean gameWon;
 
     public Game(Hero hero) {
         this.hero = hero;
@@ -25,6 +27,8 @@ public class Game {
         this.shop = new Shop();
         this.roomNumber = 1;
         this.currentRoom = createRoom(roomNumber);
+        this.bossUnlocked = false;
+        this.gameWon = false;
     }
 
     public Hero getHero() {
@@ -44,6 +48,14 @@ public class Game {
             combatManager.heroAttack(hero, currentRoom.getMonster());
 
             if (!currentRoom.getMonster().isAlive()) {
+
+                if (currentRoom.getMonster().getName().equals("Ancient Shadow Dragon")) {
+                    gameWon = true;
+                    currentRoom.clearRoom();
+                    System.out.println("Victory! You defeated the Ancient Shadow Dragon.");
+                    return;
+                }
+
                 currentRoom.clearRoom();
                 hero.addGold(10);
                 hero.gainExperience(50);
@@ -51,7 +63,8 @@ public class Game {
                 System.out.println("Room cleared!");
                 System.out.println("You gained 10 gold and 50 experience.");
             }
-        } else {
+        } 
+        else {
             System.out.println("There is no monster to attack.");
         }
     }
@@ -59,7 +72,8 @@ public class Game {
     public void monsterAttack() {
         if (currentRoom.hasMonster()) {
             combatManager.monsterAttack(currentRoom.getMonster(), hero);
-        } else {
+        } 
+        else {
             System.out.println("No monster can attack you.");
         }
     }
@@ -72,9 +86,51 @@ public class Game {
 
         roomNumber++;
         currentRoom = createRoom(roomNumber);
+        
+        if (roomNumber >= 5) {
+            bossUnlocked = true;
+            System.out.println("The boss chamber is now unlocked.");
+        }
 
         System.out.println("You entered room " + roomNumber + ".");
         System.out.println(currentRoom.getDescription());
+    }
+    
+    public boolean isBossUnlocked() {
+        return bossUnlocked;
+    }
+
+    public boolean isGameWon() {
+        return gameWon;
+    }
+
+    public void startBossFight() {
+        if (!bossUnlocked) {
+            System.out.println("Boss room is locked. Reach room 5 first.");
+            return;
+        }
+
+        if (currentRoom.hasMonster()) {
+            System.out.println("Defeat the current monster first.");
+            return;
+        }
+
+        Monster boss = new Monster(
+                "Ancient Shadow Dragon",
+                180,
+                18,
+                12,
+                7,
+                6
+        );
+
+        currentRoom = new Room(
+                999,
+                "The final chamber burns with shadow fire.",
+                boss
+        );
+
+        System.out.println("The Ancient Shadow Dragon appears!");
     }
 
     private Room createRoom(int number) {

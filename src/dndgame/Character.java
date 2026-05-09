@@ -68,7 +68,12 @@ public class Character {
     public boolean isAlive() {
         return currentHealth > 0;
     }
+    
     public boolean isFullHealth() {
         return currentHealth == maxHealth;
+    }
+    
+    public int getMaxHealth() {
+        return maxHealth;
     }
 }
