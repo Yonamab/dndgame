@@ -119,9 +119,10 @@ public class Game {
                 "Ancient Shadow Dragon",
                 180,
                 18,
-                12,
                 7,
-                6
+                6,
+                12,
+                MonsterPersonality.STRATEGIC
         );
 
         currentRoom = new Room(
@@ -138,9 +139,10 @@ public class Game {
                 "Goblin Scout",
                 35 + number * 10,
                 12,
-                6,
                 3,
-                2
+                2,
+                6,
+                MonsterPersonality.COWARDLY
         );
 
         return new Room(

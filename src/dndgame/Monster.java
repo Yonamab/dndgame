@@ -14,14 +14,26 @@ package dndgame;
 public class Monster extends Character {
 
     private int damageDie;
+    private MonsterPersonality personality;
    
-    public Monster(String name, int maxHealth, int armorClass, int damageDie, int attackBonus, int damageBonus) {
+    public Monster(String name,
+                int maxHealth,
+                int armorClass,
+                int attackBonus,
+                int damageBonus,
+                int damageDie,
+                MonsterPersonality personality) {
     super(name, maxHealth, armorClass, attackBonus, damageBonus);
     this.damageDie = damageDie;
-}
+    this.personality = personality;
+    }
 
     public int getDamageDie() {
         return damageDie;
+    }
+    
+    public MonsterPersonality getPersonality() {
+        return personality;
     }
     
 }
