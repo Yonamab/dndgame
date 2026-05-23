@@ -15,10 +15,12 @@ public class Mage extends Hero {
 
     public Mage(String name) {
         super(name, 85, 12, 4, 3);
+        setEquippedWeapon(new Staff());
     }
 
     @Override
     public int attack(Dice dice) {
-        return dice.roll(10) + getDamageBonus();
+        
+        return dice.roll(10) + getDamageBonus() + getEquippedWeapon().getDamageBonus();
     }
 }

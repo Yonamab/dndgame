@@ -15,10 +15,12 @@ public class Warrior extends Hero {
 
     public Warrior(String name) {
         super(name, 125, 16, 5, 4);
+        setEquippedWeapon(new Sword());
     }
 
     @Override
     public int attack(Dice dice) {
-        return dice.roll(8) + getDamageBonus();
+        
+        return dice.roll(8) + getDamageBonus() + getEquippedWeapon().getDamageBonus();
     }
 }

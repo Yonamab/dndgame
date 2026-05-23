@@ -28,6 +28,10 @@ public class DnDGame extends JFrame {
     private JLabel roomLabel;
     private JLabel monsterLabel;
     private JLabel rulesLabel;
+    private JLabel weaponLabel;
+    private JLabel heroDiceLabel;
+    private JLabel monsterDiceLabel;
+    private JLabel damageLabel;
 
     private JProgressBar heroHealthBar;
     private JProgressBar monsterHealthBar;
@@ -40,6 +44,12 @@ public class DnDGame extends JFrame {
     private JButton nextRoomButton;
     private JButton bossButton;
     private JButton rulesButton;
+    private JButton upgradeWeaponButton;
+    private JButton upgradeArmorButton;
+    
+    private int lastHeroRoll;
+    private int lastMonsterRoll;
+    private int lastDamageRoll;
 
     public DnDGame() {
         setTitle("Roll of Fate");
@@ -60,20 +70,19 @@ public class DnDGame extends JFrame {
     }
 
     private JPanel createStartScreen() {
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(new Color(18, 18, 30));
+        JPanel panel = createBackgroundPanel("/dndgame/images/Background1.png");
+        panel.setLayout(new BorderLayout());
         panel.setBorder(new EmptyBorder(40, 40, 40, 40));
 
-        JLabel title = new JLabel("Roll of Fate", SwingConstants.CENTER);
-        title.setForeground(new Color(240, 200, 100));
-        title.setFont(new Font("Serif", Font.BOLD, 42));
+        
+       
 
         JPanel formWrapper = new JPanel(new GridBagLayout());
-        formWrapper.setBackground(new Color(18, 18, 30));
+    formWrapper.setOpaque(false);
 
-        JPanel formPanel = new JPanel();
-        formPanel.setLayout(new BoxLayout(formPanel, BoxLayout.Y_AXIS));
-        formPanel.setBackground(new Color(18, 18, 30));
+    JPanel formPanel = new JPanel();
+    formPanel.setLayout(new BoxLayout(formPanel, BoxLayout.Y_AXIS));
+    formPanel.setOpaque(false);
         formPanel.setMaximumSize(new Dimension(420, 260));
 
         JLabel nameLabel = new JLabel("Enter Hero Name:");
@@ -113,7 +122,7 @@ public class DnDGame extends JFrame {
 
         formWrapper.add(formPanel);
 
-        panel.add(title, BorderLayout.NORTH);
+        
         panel.add(formWrapper, BorderLayout.CENTER);
 
         return panel;
@@ -154,17 +163,26 @@ public class DnDGame extends JFrame {
         heroHealthBar.setPreferredSize(new Dimension(550, 22));
         heroHealthBar.setAlignmentX(Component.CENTER_ALIGNMENT);
         heroHealthBar.setStringPainted(true);
-
+        
+        weaponLabel = createInfoLabel();
         roomLabel = createInfoLabel();
         rulesLabel = createInfoLabel();
+        heroDiceLabel = createInfoLabel();
+        damageLabel = createInfoLabel();
 
         panel.add(heroLabel);
         panel.add(Box.createVerticalStrut(10));
         panel.add(heroHealthBar);
         panel.add(Box.createVerticalStrut(15));
+        panel.add(weaponLabel);
+        panel.add(Box.createVerticalStrut(15));
         panel.add(roomLabel);
         panel.add(Box.createVerticalStrut(15));
         panel.add(rulesLabel);
+        panel.add(Box.createVerticalStrut(15));
+        panel.add(heroDiceLabel);
+        panel.add(Box.createVerticalStrut(10));
+        panel.add(damageLabel);
 
         return panel;
     }
@@ -175,6 +193,7 @@ public class DnDGame extends JFrame {
 
         monsterLabel = createInfoLabel();
         monsterHealthBar = new JProgressBar();
+        monsterDiceLabel = createInfoLabel();
         monsterHealthBar.setMaximumSize(new Dimension(550, 22));
         monsterHealthBar.setPreferredSize(new Dimension(550, 22));
         monsterHealthBar.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -183,6 +202,8 @@ public class DnDGame extends JFrame {
         panel.add(monsterLabel);
         panel.add(Box.createVerticalStrut(10));
         panel.add(monsterHealthBar);
+        panel.add(Box.createVerticalStrut(10));
+        panel.add(monsterDiceLabel);
 
         return panel;
     }
@@ -206,19 +227,24 @@ public class DnDGame extends JFrame {
     }
 
     private JPanel createButtonPanel() {
-        JPanel panel = new JPanel(new GridLayout(1, 6, 8, 8));
+        JPanel panel = new JPanel(new GridLayout(1, 8, 8, 8));
         panel.setBackground(new Color(15, 15, 25));
 
         attackButton = new JButton("Attack");
         potionButton = new JButton("Use Potion");
         shopButton = new JButton("Buy Potion");
+        upgradeWeaponButton = new JButton("Upgrade Weapon");
+        upgradeArmorButton = new JButton("Upgrade Armor");
         nextRoomButton = new JButton("Next Room");
         bossButton = new JButton("Boss Fight");
         rulesButton = new JButton("Customize Rules");
+        
 
         attackButton.addActionListener(e -> attackMonster());
         potionButton.addActionListener(e -> usePotion());
         shopButton.addActionListener(e -> buyPotion());
+        upgradeWeaponButton.addActionListener(e -> upgradeWeapon());
+        upgradeArmorButton.addActionListener(e -> upgradeArmor());
         nextRoomButton.addActionListener(e -> nextRoom());
         bossButton.addActionListener(e -> startBossFight());
         rulesButton.addActionListener(e -> openRuleCustomization());
@@ -226,6 +252,8 @@ public class DnDGame extends JFrame {
         panel.add(attackButton);
         panel.add(potionButton);
         panel.add(shopButton);
+        panel.add(upgradeWeaponButton);
+        panel.add(upgradeArmorButton);
         panel.add(nextRoomButton);
         panel.add(bossButton);
         panel.add(rulesButton);
@@ -298,13 +326,23 @@ public class DnDGame extends JFrame {
     }
 
     private void attackMonster() {
+
+        lastHeroRoll = (int)(Math.random() * 20) + 1;
+        lastDamageRoll = (int)(Math.random() * 8) + 1;
+
         game.heroAttack();
 
         if (!game.isGameWon() && game.getHero().isAlive()) {
+
+            lastMonsterRoll = (int)(Math.random() * 20) + 1;
+
             game.monsterAttack();
         }
 
-        log("A combat round was completed.");
+        log("Hero rolled D20: " + lastHeroRoll);
+        log("Damage roll: " + lastDamageRoll);
+        log("Monster rolled D20: " + lastMonsterRoll);
+
         updateGUI();
         checkGameEnd();
     }
@@ -410,12 +448,20 @@ public class DnDGame extends JFrame {
                 "<html>Hero: " + hero.getName()
                         + "<br>Gold: " + hero.getGold()
                         + "<br>Level: " + hero.getLevel()
+                        + "<br>Armor: " + hero.getTotalArmorClass()
                         + "</html>"
         );
 
         heroHealthBar.setMaximum(hero.getMaxHealth());
         heroHealthBar.setValue(hero.getCurrentHealth());
         heroHealthBar.setString("HP: " + hero.getCurrentHealth() + " / " + hero.getMaxHealth());
+        
+        weaponLabel.setText(
+                "Weapon: "
+                + hero.getEquippedWeapon().getName()
+                + " | Damage Bonus: +"
+                + hero.getEquippedWeapon().getDamageBonus()
+        );
 
         roomLabel.setText(
                 "<html>Room: " + room.getRoomNumber()
@@ -440,6 +486,18 @@ public class DnDGame extends JFrame {
                         + "<br>Boss room: " + game.getBossUnlockRule().getRequiredRoom()
                         + "</html>"
         );
+        
+        heroDiceLabel.setText(
+        "Hero D20 Roll: " + lastHeroRoll
+        );
+
+        monsterDiceLabel.setText(
+                "Monster D20 Roll: " + lastMonsterRoll
+        );
+
+        damageLabel.setText(
+                "Damage Roll: " + lastDamageRoll
+        );
     }
 
     private void checkGameEnd() {
@@ -455,6 +513,49 @@ public class DnDGame extends JFrame {
     private void log(String message) {
         logArea.append(message + "\n");
         logArea.setCaretPosition(logArea.getDocument().getLength());
+    }
+    
+    private void upgradeWeapon() {
+        try {
+            game.getShop().upgradeWeapon(game.getHero());
+            log("Weapon upgraded.");
+        } catch (IllegalStateException ex) {
+            log("Shop error: " + ex.getMessage());
+        }
+
+        updateGUI();
+    }
+    
+    private void upgradeArmor() {
+        try {
+            game.getShop().upgradeArmor(game.getHero());
+            log("Armor upgraded.");
+        } catch (IllegalStateException ex) {
+            log("Shop error: " + ex.getMessage());
+        }
+
+        updateGUI();
+    }
+    
+    private JPanel createBackgroundPanel(String imagePath) {
+        return new JPanel() {
+            private Image backgroundImage =
+                    new ImageIcon(getClass().getResource(imagePath)).getImage();
+
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+
+                g.drawImage(
+                        backgroundImage,
+                        0,
+                        0,
+                        getWidth(),
+                        getHeight(),
+                        this
+                );
+            }
+        };
     }
 
     public static void main(String[] args) {

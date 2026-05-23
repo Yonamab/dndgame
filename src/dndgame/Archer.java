@@ -15,10 +15,12 @@ public class Archer extends Hero {
 
     public Archer(String name) {
         super(name, 100, 14, 6, 2);
+        setEquippedWeapon(new Bow());
     }
 
     @Override
     public int attack(Dice dice) {
-        return dice.roll(6) + dice.roll(6) + getDamageBonus();
+        
+        return dice.roll(6) + dice.roll(6) + getDamageBonus() + getEquippedWeapon().getDamageBonus();
     }
 }

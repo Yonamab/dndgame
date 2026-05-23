@@ -67,7 +67,7 @@ public class CombatManager {
         System.out.println(monster.getName() + " rolls D20: " + d20);
         System.out.println("Total attack: " + totalAttack);
 
-        if (d20 == 20 || totalAttack >= hero.getArmorClass()) {
+        if (d20 == 20 || totalAttack >= hero.getTotalArmorClass()) {
 
             int damage = dice.roll(monster.getDamageDie()) + monster.getDamageBonus();
 

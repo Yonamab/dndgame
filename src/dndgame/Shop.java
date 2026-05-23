@@ -24,4 +24,27 @@ public class Shop {
 
         System.out.println(hero.getName() + " bought a healing potion.");
     }
+    
+    public void upgradeWeapon(Hero hero) {
+        int upgradeCost = 45;
+
+        hero.spendGold(upgradeCost);
+
+        Weapon weapon = hero.getEquippedWeapon();
+        weapon.setDamageBonus(weapon.getDamageBonus() + 2);
+
+        System.out.println(hero.getName()
+                + "'s "
+                + weapon.getName()
+                + " was upgraded.");
+    }
+    
+    public void upgradeArmor(Hero hero) {
+        int upgradeCost = 45;
+
+        hero.spendGold(upgradeCost);
+        hero.increaseArmorBonus(2);
+
+        System.out.println(hero.getName() + "'s armor was upgraded.");
+    }
 }

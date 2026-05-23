@@ -15,10 +15,12 @@ public class Rogue extends Hero {
 
     public Rogue(String name) {
         super(name, 90, 13, 7, 3);
+        setEquippedWeapon(new Dagger());
     }
 
     @Override
     public int attack(Dice dice) {
-        return dice.roll(6) + getDamageBonus();
+        
+        return dice.roll(6) + getDamageBonus() + getEquippedWeapon().getDamageBonus();
     }
 }

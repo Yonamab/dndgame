@@ -15,14 +15,17 @@ public class Hero extends Character {
 
     private int level;
     private int experience;
+    private Weapon equippedWeapon;
     private int gold;
     private Inventory inventory;
+    private int armorBonus;
 
     public Hero(String name, int maxHealth, int armorClass, int attackBonus, int damageBonus) {
         super(name, maxHealth, armorClass, attackBonus, damageBonus);
         this.level = 1;
         this.experience = 0;
         this.gold = 25;
+        this.armorBonus = 0;
         this.inventory = new Inventory();
     }
 
@@ -48,7 +51,14 @@ public class Hero extends Character {
     }
 
     public int attack(Dice dice) {
-        return dice.roll(8) + getDamageBonus();
+        
+        int weaponDamage = 0;
+
+        if (equippedWeapon != null) {
+            weaponDamage = equippedWeapon.getDamageBonus();
+        }
+
+        return dice.roll(8) + getDamageBonus() + weaponDamage;
     }
     
     public Inventory getInventory() {
@@ -69,5 +79,24 @@ public class Hero extends Character {
         }
 
         gold -= amount;
+    }
+    
+    public Weapon getEquippedWeapon() {
+        return equippedWeapon;
+    }
+
+    public void setEquippedWeapon(Weapon equippedWeapon) {
+        this.equippedWeapon = equippedWeapon;
+    }
+    public int getArmorBonus() {
+        return armorBonus;
+    }
+
+    public void increaseArmorBonus(int amount) {
+        armorBonus += amount;
+    }
+
+    public int getTotalArmorClass() {
+        return getArmorClass() + armorBonus;
     }
 }
