@@ -1,5 +1,5 @@
 /*
- * Project: Dice Realms: Shadow Dungeon
+ * Project: Roll of Fate
  * Author: Yonathan Abaineh Munshea
  * Course: Object Oriented Programming
  * Instructor: Prof. Salvatore Distefano
@@ -33,5 +33,21 @@ public class Potion extends Item implements Usable {
 
         hero.heal(healingAmount);
         System.out.println(hero.getName() + " used a potion and healed " + healingAmount + " HP.");
+    }
+    
+    public void use(Hero hero, HealingRule healingRule) {
+        
+        if (hero.isFullHealth()) {
+            System.out.println("Health is already full. Potion not used.");
+            return;
+        }
+
+        int healingAmount = healingRule.calculateHealing(hero);
+        hero.heal(healingAmount);
+
+        System.out.println(hero.getName()
+                + " used a potion and healed "
+                + healingAmount
+                + " HP.");
     }
 }

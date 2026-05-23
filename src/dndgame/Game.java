@@ -1,5 +1,5 @@
 /*
- * Project: Dice Realms: Shadow Dungeon
+ * Project: Roll of Fate
  * Author: Yonathan Abaineh Munshea
  * Course: Object Oriented Programming
  * Instructor: Prof. Salvatore Distefano
@@ -17,6 +17,9 @@ public class Game {
     private Room currentRoom;
     private CombatManager combatManager;
     private Shop shop;
+    private HealingRule healingRule;
+    private RewardRule rewardRule;
+    private BossUnlockRule bossUnlockRule;
     private int roomNumber;
     private boolean bossUnlocked;
     private boolean gameWon;
@@ -25,6 +28,9 @@ public class Game {
         this.hero = hero;
         this.combatManager = new CombatManager();
         this.shop = new Shop();
+        this.healingRule = new HealingRule(25);
+        this.rewardRule = new RewardRule(10, 50);
+        this.bossUnlockRule = new BossUnlockRule(5);
         this.roomNumber = 1;
         this.currentRoom = createRoom(roomNumber);
         this.bossUnlocked = false;
@@ -33,6 +39,10 @@ public class Game {
 
     public Hero getHero() {
         return hero;
+    }
+    
+    public CombatManager getCombatManager() {
+        return combatManager;
     }
 
     public Room getCurrentRoom() {
@@ -57,11 +67,19 @@ public class Game {
                 }
 
                 currentRoom.clearRoom();
-                hero.addGold(10);
-                hero.gainExperience(50);
+
+                int goldReward = rewardRule.calculateGold(roomNumber);
+                int experienceReward = rewardRule.calculateExperience(roomNumber);
+
+                hero.addGold(goldReward);
+                hero.gainExperience(experienceReward);
 
                 System.out.println("Room cleared!");
-                System.out.println("You gained 10 gold and 50 experience.");
+                System.out.println("You gained "
+                        + goldReward
+                        + " gold and "
+                        + experienceReward
+                        + " experience.");
             }
         } 
         else {
@@ -87,7 +105,8 @@ public class Game {
         roomNumber++;
         currentRoom = createRoom(roomNumber);
         
-        if (roomNumber >= 5) {
+        if (bossUnlockRule.isBossUnlocked(roomNumber)) {
+            
             bossUnlocked = true;
             System.out.println("The boss chamber is now unlocked.");
         }
@@ -135,6 +154,7 @@ public class Game {
     }
 
     private Room createRoom(int number) {
+        
         Monster monster = new Monster(
                 "Goblin Scout",
                 35 + number * 10,
@@ -150,5 +170,49 @@ public class Game {
                 "A shadowy dungeon room filled with danger.",
                 monster
         );
+    }
+    
+    public HealingRule getHealingRule() {
+        
+        return healingRule;
+    }
+
+    public void setHealingRule(HealingRule healingRule) {
+        
+        this.healingRule = healingRule;
+    }
+    
+    public void usePotion() {
+       
+        Potion potion = hero.getInventory().getPotion();
+
+        if (potion == null) {
+            System.out.println("No potion available.");
+            return;
+        }
+
+        potion.use(hero, healingRule);
+        hero.getInventory().removeItem(potion);
+
+        combatManager.recordPotionUse();
+    }
+    
+    public RewardRule getRewardRule() {
+        
+        return rewardRule;
+    }
+
+    public void setRewardRule(RewardRule rewardRule) {
+        this.rewardRule = rewardRule;
+    }
+    
+    public BossUnlockRule getBossUnlockRule() {
+        
+        return bossUnlockRule;
+    }
+
+    public void setBossUnlockRule(BossUnlockRule bossUnlockRule) {
+        
+        this.bossUnlockRule = bossUnlockRule;
     }
 }

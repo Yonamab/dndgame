@@ -1,5 +1,5 @@
 /**
- * Project: Dice Realms: Shadow Dungeon
+ * Project: Roll of Fate
  * Author: Yonathan Abaineh Munshea
  * Course: Object Oriented Programming
  * Instructor: Prof. Salvatore Distefano
@@ -14,12 +14,20 @@ package dndgame;
 public class CombatManager {
 
     private Dice dice;
+    private EnemyAI enemyAI;
+    private PlayerBehaviorTracker behaviorTracker;
+    private CriticalHitRule criticalHitRule;
 
     public CombatManager() {
         dice = new Dice();
+        enemyAI = new EnemyAI();
+        behaviorTracker = new PlayerBehaviorTracker();
+        criticalHitRule = new CriticalHitRule(2);
     }
 
     public void heroAttack(Hero hero, Monster monster) {
+        behaviorTracker.recordAttack();
+        
         int d20 = dice.roll(20);
         int totalAttack = d20 + hero.getAttackBonus();
 
@@ -44,6 +52,15 @@ public class CombatManager {
             return;
         }
 
+        EnemyAction action = enemyAI.chooseAction(monster, hero, behaviorTracker);
+
+        System.out.println(monster.getName() + " chooses: " + action);
+
+        if (action == EnemyAction.DEFEND) {
+            System.out.println(monster.getName() + " defends and waits for a better moment.");
+            return;
+        }
+
         int d20 = dice.roll(20);
         int totalAttack = d20 + monster.getAttackBonus();
 
@@ -51,34 +68,66 @@ public class CombatManager {
         System.out.println("Total attack: " + totalAttack);
 
         if (d20 == 20 || totalAttack >= hero.getArmorClass()) {
+
             int damage = dice.roll(monster.getDamageDie()) + monster.getDamageBonus();
 
-            boolean enraged = monster.getCurrentHealth() < monster.getMaxHealth() / 3;
+            if (action == EnemyAction.SPECIAL) {
+                int specialDamage = dice.roll(6);
+                damage += specialDamage;
 
-            if (enraged) {
-                int rageDamage = dice.roll(4);
-                damage += rageDamage;
-                System.out.println(monster.getName() + " is enraged and adds " + rageDamage + " damage.");
+                System.out.println(monster.getName()
+                        + " uses a special attack and adds "
+                        + specialDamage
+                        + " damage.");
             }
 
             if (monster.getName().equals("Ancient Shadow Dragon")) {
                 int dragonDamage = dice.roll(12);
                 damage += dragonDamage;
-                System.out.println("The dragon breathes shadow fire for " + dragonDamage + " extra damage.");
+
+                System.out.println("The dragon breathes shadow fire for "
+                        + dragonDamage
+                        + " extra damage.");
             }
 
             if (d20 == 20) {
-                damage *= 2;
+                damage = criticalHitRule.applyCritical(damage);
                 System.out.println("Enemy critical hit! Damage doubled.");
             }
 
             hero.takeDamage(damage);
 
-            System.out.println(monster.getName() + " hits " + hero.getName());
+            System.out.println(monster.getName()
+                    + " hits "
+                    + hero.getName());
+
             System.out.println("Damage dealt: " + damage);
+
         } 
         else {
-            System.out.println(monster.getName() + " misses " + hero.getName());
+            System.out.println(monster.getName()
+                    + " misses "
+                    + hero.getName());
         }
+    }
+    
+    public PlayerBehaviorTracker getBehaviorTracker() {
+        
+        return behaviorTracker;
+    }
+    
+    public void recordPotionUse() {
+        
+        behaviorTracker.recordPotionUse();
+    }
+    
+    public CriticalHitRule getCriticalHitRule() {
+        
+        return criticalHitRule;
+    }
+
+    public void setCriticalHitRule(CriticalHitRule criticalHitRule) {
+
+        this.criticalHitRule = criticalHitRule;
     }
 }

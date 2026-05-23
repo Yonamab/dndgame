@@ -6,13 +6,13 @@
  * Date: [Submission Date]
  *
  * Description:
- * This enum represents the possible actions an enemy AI can choose.
+ * This interface represents customizable gameplay rules.
  */
 package dndgame;
 
-public enum EnemyAction {
+public interface GameRule {
 
-    ATTACK,
-    DEFEND,
-    SPECIAL
+    String getRuleName();
+
+    String getDescription();
 }

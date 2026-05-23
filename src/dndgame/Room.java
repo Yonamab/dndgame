@@ -1,5 +1,5 @@
 /**
- * Project: Dice Realms: Shadow Dungeon
+ * Project: Roll of Fate
  * Author: Yonathan Abaineh Munshea
  * Course: Object Oriented Programming
  * Instructor: Prof. Salvatore Distefano
