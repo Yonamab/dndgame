@@ -40,6 +40,7 @@ public class Inventory {
     }
 
     public Potion getPotion() {
+        
         for (Item item : items) {
             if (item instanceof Potion) {
                 return (Potion) item;
@@ -51,5 +52,33 @@ public class Inventory {
 
     public void removeItem(Item item) {
         items.remove(item);
+    }
+    
+    public Potion getPotionAt(int potionIndex) {
+        int count = 0;
+
+        for (Item item : items) {
+            if (item instanceof Potion) {
+                if (count == potionIndex) {
+                    return (Potion) item;
+                }
+                count++;
+            }
+        }
+
+        return null;
+    }
+    
+    public String[] getPotionNames() {
+        
+        java.util.ArrayList<String> names = new java.util.ArrayList<>();
+
+        for (Item item : items) {
+            if (item instanceof Potion) {
+                names.add(item.getName());
+            }
+        }
+
+        return names.toArray(new String[0]);
     }
 }

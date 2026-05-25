@@ -23,4 +23,25 @@ public class Warrior extends Hero {
         
         return dice.roll(8) + getDamageBonus() + getEquippedWeapon().getDamageBonus();
     }
+    
+    @Override
+    public int specialAttack(Dice dice) {
+
+        int damage =
+                attack(dice)
+                + 8
+                + getTemporaryDamageBonus();
+
+        System.out.println(
+                getName()
+                + " used Power Strike!"
+        );
+
+        return damage;
+    }
+    
+    @Override
+    public String getSpecialAttackName() {
+        return "Power Strike";
+    }
 }

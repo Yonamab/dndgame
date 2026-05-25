@@ -23,4 +23,38 @@ public class Rogue extends Hero {
         
         return dice.roll(6) + getDamageBonus() + getEquippedWeapon().getDamageBonus();
     }
+    
+    @Override
+    public int specialAttack(Dice dice) {
+
+        int damage =
+                attack(dice)
+                + 10
+                + getTemporaryDamageBonus();
+
+        int criticalChance = dice.roll(100);
+
+        if (criticalChance <= 30) {
+
+            damage *= 2;
+
+            System.out.println(
+                    getName()
+                    + " landed a Shadow Critical!"
+            );
+        }
+
+        System.out.println(
+                getName()
+                + " used Shadow Stab!"
+        );
+
+        return damage;
+    }
+    
+    @Override
+    public String getSpecialAttackName() {
+        return "Shadow Stab";
+    }
+    
 }

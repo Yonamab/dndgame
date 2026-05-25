@@ -19,8 +19,11 @@ public class Shop {
     }
 
     public void buyPotion(Hero hero) {
+        
+        int potionPrice = 15;
+
         hero.spendGold(potionPrice);
-        hero.getInventory().addItem(new Potion());
+        hero.getInventory().addItem(new HealingPotion());
 
         System.out.println(hero.getName() + " bought a healing potion.");
     }
@@ -46,5 +49,41 @@ public class Shop {
         hero.increaseArmorBonus(2);
 
         System.out.println(hero.getName() + "'s armor was upgraded.");
+    }
+    
+    public void buyManaPotion(Hero hero) {
+        int cost = 20;
+
+        hero.spendGold(cost);
+        hero.getInventory().addItem(new ManaPotion());
+
+        System.out.println(hero.getName() + " bought a mana potion.");
+    }
+
+    public void buyFocusPotion(Hero hero) {
+        int cost = 20;
+
+        hero.spendGold(cost);
+        hero.getInventory().addItem(new FocusPotion());
+
+        System.out.println(hero.getName() + " bought a focus potion.");
+    }
+
+    public void buyShadowPotion(Hero hero) {
+        int cost = 25;
+
+        hero.spendGold(cost);
+        hero.getInventory().addItem(new ShadowPotion());
+
+        System.out.println(hero.getName() + " bought a shadow potion.");
+    }
+
+    public void buyDefensePotion(Hero hero) {
+        int cost = 20;
+
+        hero.spendGold(cost);
+        hero.getInventory().addItem(new DefensePotion());
+
+        System.out.println(hero.getName() + " bought a defense potion.");
     }
 }

@@ -23,4 +23,25 @@ public class Archer extends Hero {
         
         return dice.roll(6) + dice.roll(6) + getDamageBonus() + getEquippedWeapon().getDamageBonus();
     }
+    
+    @Override
+    public int specialAttack(Dice dice) {
+
+        int damage =
+                attack(dice)
+                + attack(dice)
+                + getTemporaryDamageBonus();
+
+        System.out.println(
+                getName()
+                + " used Piercing Shot!"
+        );
+
+        return damage;
+    }
+    
+    @Override
+    public String getSpecialAttackName() {
+        return "Piercing Shot";
+    }
 }

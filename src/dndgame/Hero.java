@@ -11,6 +11,8 @@
  */
 package dndgame;
 
+import java.util.ArrayList;
+
 public class Hero extends Character {
 
     private int level;
@@ -19,6 +21,7 @@ public class Hero extends Character {
     private int gold;
     private Inventory inventory;
     private int armorBonus;
+    private ArrayList<StatusEffect> statusEffects;
 
     public Hero(String name, int maxHealth, int armorClass, int attackBonus, int damageBonus) {
         super(name, maxHealth, armorClass, attackBonus, damageBonus);
@@ -26,6 +29,7 @@ public class Hero extends Character {
         this.experience = 0;
         this.gold = 25;
         this.armorBonus = 0;
+        this.statusEffects = new ArrayList<>();
         this.inventory = new Inventory();
     }
 
@@ -59,6 +63,11 @@ public class Hero extends Character {
         }
 
         return dice.roll(8) + getDamageBonus() + weaponDamage;
+    }
+    
+    public int specialAttack(Dice dice) {
+        
+        return attack(dice) + getTemporaryDamageBonus();
     }
     
     public Inventory getInventory() {
@@ -97,6 +106,78 @@ public class Hero extends Character {
     }
 
     public int getTotalArmorClass() {
-        return getArmorClass() + armorBonus;
+        return getArmorClass() + armorBonus + getTemporaryArmorBonus();
     }
+    
+    public void addStatusEffect(StatusEffect effect) {
+        statusEffects.add(effect);
+    }
+
+    public int getTemporaryAttackBonus() {
+        int total = 0;
+
+        for (StatusEffect effect : statusEffects) {
+            total += effect.getAttackBonus();
+        }
+
+        return total;
+    }
+
+    public int getTemporaryDamageBonus() {
+        int total = 0;
+
+        for (StatusEffect effect : statusEffects) {
+            total += effect.getDamageBonus();
+        }
+
+        return total;
+    }
+
+    public int getTemporaryArmorBonus() {
+        int total = 0;
+
+        for (StatusEffect effect : statusEffects) {
+            total += effect.getArmorBonus();
+        }
+
+        return total;
+    }
+
+    public void updateStatusEffects() {
+        for (int i = statusEffects.size() - 1; i >= 0; i--) {
+            StatusEffect effect = statusEffects.get(i);
+            effect.decreaseDuration();
+
+            if (effect.isExpired()) {
+                statusEffects.remove(i);
+            }
+        }
+    }
+    
+    public String getActiveEffectsText() {
+
+        if (statusEffects.isEmpty()) {
+            return "None";
+        }
+
+        StringBuilder builder = new StringBuilder();
+
+        for (StatusEffect effect : statusEffects) {
+
+            builder.append(effect.getName())
+                   .append(" [")
+                   .append(effect.getDuration())
+                   .append(" turns]")
+                   .append("<br>");
+
+        }
+
+        return builder.toString();
+    }
+    
+    public String getSpecialAttackName() {
+    
+        return "Strike of Doom";
+    }
+
 }

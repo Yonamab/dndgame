@@ -17,6 +17,8 @@ public class CombatManager {
     private EnemyAI enemyAI;
     private PlayerBehaviorTracker behaviorTracker;
     private CriticalHitRule criticalHitRule;
+    private int lastD20Roll;
+    private int lastDamageRoll;
 
     public CombatManager() {
         dice = new Dice();
@@ -29,13 +31,17 @@ public class CombatManager {
         behaviorTracker.recordAttack();
         
         int d20 = dice.roll(20);
-        int totalAttack = d20 + hero.getAttackBonus();
+        lastD20Roll = d20;
+        int totalAttack = d20 + hero.getAttackBonus() + hero.getTemporaryAttackBonus();
 
         System.out.println(hero.getName() + " rolls D20: " + d20);
         System.out.println("Total attack: " + totalAttack);
 
         if (totalAttack >= monster.getArmorClass()) {
+            
             int damage = hero.attack(dice);
+            damage += hero.getTemporaryDamageBonus();
+            lastDamageRoll = damage;
 
             monster.takeDamage(damage);
 
@@ -44,7 +50,59 @@ public class CombatManager {
         else {
             System.out.println(hero.getName() + " misses " + monster.getName());
         }
-}
+    }
+    
+    public void heroSpecialAttack(Hero hero, Monster monster) {
+
+        if (!monster.isAlive()) {
+            return;
+        }
+
+        Dice dice = new Dice();
+
+        int d20 = dice.roll(20);
+        lastD20Roll = d20;
+
+        int totalAttack =
+                d20
+                + hero.getAttackBonus()
+                + hero.getTemporaryAttackBonus();
+
+        System.out.println(hero.getName() + " rolls D20: " + d20);
+
+        if (d20 == 20 || totalAttack >= monster.getArmorClass()) {
+
+            int damage = hero.specialAttack(dice);
+            lastDamageRoll = damage;
+
+            if (d20 == 20) {
+
+                damage *= 2;
+
+                System.out.println(
+                        "Critical special attack!"
+                );
+            }
+
+            monster.takeDamage(damage);
+
+            System.out.println(
+                    hero.getName()
+                    + " dealt "
+                    + damage
+                    + " special damage."
+            );
+
+        } else {
+
+            System.out.println(
+                    hero.getName()
+                    + " missed the special attack on "
+                    + monster.getName()
+                    + "."
+            );
+        }
+    }
 
     public void monsterAttack(Monster monster, Hero hero) {
         if (!monster.isAlive()) {
@@ -62,7 +120,9 @@ public class CombatManager {
         }
 
         int d20 = dice.roll(20);
+        lastD20Roll = d20;
         int totalAttack = d20 + monster.getAttackBonus();
+        
 
         System.out.println(monster.getName() + " rolls D20: " + d20);
         System.out.println("Total attack: " + totalAttack);
@@ -96,6 +156,7 @@ public class CombatManager {
             }
 
             hero.takeDamage(damage);
+            lastDamageRoll = damage;
 
             System.out.println(monster.getName()
                     + " hits "
@@ -129,5 +190,13 @@ public class CombatManager {
     public void setCriticalHitRule(CriticalHitRule criticalHitRule) {
 
         this.criticalHitRule = criticalHitRule;
+    }
+    
+    public int getLastD20Roll() {
+    return lastD20Roll;
+    }
+
+    public int getLastDamageRoll() {
+        return lastDamageRoll;
     }
 }

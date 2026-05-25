@@ -86,10 +86,37 @@ public class Game {
             System.out.println("There is no monster to attack.");
         }
     }
+    
+    public void heroSpecialAttack() {
+
+        if (!currentRoom.hasMonster()) {
+
+            System.out.println(
+                    "No monster available."
+            );
+
+            return;
+        }
+
+        if (!currentRoom.getMonster().isAlive()) {
+
+            System.out.println(
+                    "Monster already defeated."
+            );
+
+            return;
+        }
+
+        combatManager.heroSpecialAttack(
+                hero,
+                currentRoom.getMonster()
+        );
+    }
 
     public void monsterAttack() {
         if (currentRoom.hasMonster()) {
             combatManager.monsterAttack(currentRoom.getMonster(), hero);
+            hero.updateStatusEffects();
         } 
         else {
             System.out.println("No monster can attack you.");
@@ -134,15 +161,8 @@ public class Game {
             return;
         }
 
-        Monster boss = new Monster(
-                "Ancient Shadow Dragon",
-                180,
-                18,
-                7,
-                6,
-                12,
-                MonsterPersonality.STRATEGIC
-        );
+        Monster boss = MonsterFactory.createBoss(hero);
+        
 
         currentRoom = new Room(
                 999,
@@ -155,15 +175,7 @@ public class Game {
 
     private Room createRoom(int number) {
         
-        Monster monster = new Monster(
-                "Goblin Scout",
-                35 + number * 10,
-                12,
-                3,
-                2,
-                6,
-                MonsterPersonality.COWARDLY
-        );
+        Monster monster = MonsterFactory.createMonster(number, hero);
 
         return new Room(
                 number,
@@ -182,18 +194,30 @@ public class Game {
         this.healingRule = healingRule;
     }
     
-    public void usePotion() {
-       
-        Potion potion = hero.getInventory().getPotion();
-
+    public void usePotion(Potion potion) {
         if (potion == null) {
-            System.out.println("No potion available.");
+            System.out.println("No potion selected.");
             return;
         }
 
-        potion.use(hero, healingRule);
-        hero.getInventory().removeItem(potion);
+        String beforeEffects = hero.getActiveEffectsText();
+        int beforeHP = hero.getCurrentHealth();
 
+        if (potion instanceof HealingPotion) {
+            ((HealingPotion) potion).use(hero, healingRule);
+        } else {
+            potion.use(hero);
+        }
+
+        String afterEffects = hero.getActiveEffectsText();
+        int afterHP = hero.getCurrentHealth();
+
+        if (beforeEffects.equals(afterEffects) && beforeHP == afterHP) {
+            System.out.println("Potion had no effect and was not consumed.");
+            return;
+        }
+
+        hero.getInventory().removeItem(potion);
         combatManager.recordPotionUse();
     }
     

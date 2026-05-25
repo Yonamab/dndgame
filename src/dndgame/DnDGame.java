@@ -32,6 +32,8 @@ public class DnDGame extends JFrame {
     private JLabel heroDiceLabel;
     private JLabel monsterDiceLabel;
     private JLabel damageLabel;
+    private JLabel effectsLabel;
+    private JLabel cooldownLabel;
 
     private JProgressBar heroHealthBar;
     private JProgressBar monsterHealthBar;
@@ -39,6 +41,7 @@ public class DnDGame extends JFrame {
     private JTextArea logArea;
 
     private JButton attackButton;
+    private JButton specialAttackButton;
     private JButton potionButton;
     private JButton shopButton;
     private JButton nextRoomButton;
@@ -50,6 +53,8 @@ public class DnDGame extends JFrame {
     private int lastHeroRoll;
     private int lastMonsterRoll;
     private int lastDamageRoll;
+    
+    private boolean specialAttackReady = true;
 
     public DnDGame() {
         setTitle("Roll of Fate");
@@ -167,8 +172,10 @@ public class DnDGame extends JFrame {
         weaponLabel = createInfoLabel();
         roomLabel = createInfoLabel();
         rulesLabel = createInfoLabel();
+        effectsLabel = createInfoLabel();
         heroDiceLabel = createInfoLabel();
         damageLabel = createInfoLabel();
+        cooldownLabel = createInfoLabel();
 
         panel.add(heroLabel);
         panel.add(Box.createVerticalStrut(10));
@@ -179,6 +186,10 @@ public class DnDGame extends JFrame {
         panel.add(roomLabel);
         panel.add(Box.createVerticalStrut(15));
         panel.add(rulesLabel);
+        panel.add(Box.createVerticalStrut(15));
+        panel.add(effectsLabel);
+        panel.add(Box.createVerticalStrut(15));
+        panel.add(cooldownLabel);
         panel.add(Box.createVerticalStrut(15));
         panel.add(heroDiceLabel);
         panel.add(Box.createVerticalStrut(10));
@@ -227,38 +238,59 @@ public class DnDGame extends JFrame {
     }
 
     private JPanel createButtonPanel() {
-        JPanel panel = new JPanel(new GridLayout(1, 8, 8, 8));
-        panel.setBackground(new Color(15, 15, 25));
+        JPanel mainButtonPanel = new JPanel(new GridLayout(1, 3, 10, 10));
+        mainButtonPanel.setBackground(new Color(15, 15, 25));
+
+        JPanel combatPanel = createStyledPanel("Combat");
+        combatPanel.setLayout(new GridLayout(4, 1, 6, 6));
+        
+        JPanel shopPanel = createStyledPanel("Shop");
+        shopPanel.setLayout(new GridLayout(3, 1, 6, 6));
+
+        JPanel worldPanel = createStyledPanel("World / Rules");
+        worldPanel.setLayout(new GridLayout(2, 1, 6, 6));
 
         attackButton = new JButton("Attack");
+        specialAttackButton = new JButton("Special Attack");
         potionButton = new JButton("Use Potion");
-        shopButton = new JButton("Buy Potion");
+        bossButton = new JButton("Boss Fight");
+
+        shopButton = new JButton("Shop");
         upgradeWeaponButton = new JButton("Upgrade Weapon");
         upgradeArmorButton = new JButton("Upgrade Armor");
+
         nextRoomButton = new JButton("Next Room");
-        bossButton = new JButton("Boss Fight");
         rulesButton = new JButton("Customize Rules");
-        
 
         attackButton.addActionListener(e -> attackMonster());
+        specialAttackButton.addActionListener(e -> specialAttack());
         potionButton.addActionListener(e -> usePotion());
+        bossButton.addActionListener(e -> startBossFight());
+
         shopButton.addActionListener(e -> buyPotion());
         upgradeWeaponButton.addActionListener(e -> upgradeWeapon());
         upgradeArmorButton.addActionListener(e -> upgradeArmor());
+
         nextRoomButton.addActionListener(e -> nextRoom());
-        bossButton.addActionListener(e -> startBossFight());
         rulesButton.addActionListener(e -> openRuleCustomization());
 
-        panel.add(attackButton);
-        panel.add(potionButton);
-        panel.add(shopButton);
-        panel.add(upgradeWeaponButton);
-        panel.add(upgradeArmorButton);
-        panel.add(nextRoomButton);
-        panel.add(bossButton);
-        panel.add(rulesButton);
+        combatPanel.add(attackButton);
+        combatPanel.add(specialAttackButton);
+        combatPanel.add(potionButton);
+        combatPanel.add(bossButton);
 
-        return panel;
+        shopPanel.add(shopButton);
+        shopPanel.add(upgradeWeaponButton);
+        shopPanel.add(upgradeArmorButton);
+
+        worldPanel.add(nextRoomButton);
+        worldPanel.add(rulesButton);
+
+        mainButtonPanel.add(combatPanel);
+        mainButtonPanel.add(shopPanel);
+        mainButtonPanel.add(worldPanel);
+
+        return mainButtonPanel;
     }
 
     private JPanel createStyledPanel(String title) {
@@ -331,6 +363,7 @@ public class DnDGame extends JFrame {
         lastDamageRoll = (int)(Math.random() * 8) + 1;
 
         game.heroAttack();
+        specialAttackReady = true;
 
         if (!game.isGameWon() && game.getHero().isAlive()) {
 
@@ -346,17 +379,154 @@ public class DnDGame extends JFrame {
         updateGUI();
         checkGameEnd();
     }
+    
+    private void specialAttack() {
+        
+        if (!specialAttackReady) {
+
+            log("Special attack is cooling down.");
+            return;
+        }
+
+        game.heroSpecialAttack();
+        specialAttackReady = false;
+
+        if (!game.isGameWon()
+                && game.getHero().isAlive()) {
+
+            game.monsterAttack();
+        }
+
+        Monster monster =
+        game.getCurrentRoom().getMonster();
+
+        String attackName = "Special Attack";
+
+        Hero hero = game.getHero();
+
+        log(
+                hero.getName()
+                + " used "
+                + hero.getSpecialAttackName()
+                + " on "
+                + monster.getName()
+                + "."
+        );
+        
+        updateGUI();
+        checkGameEnd();
+    }
 
     private void usePotion() {
-        game.usePotion();
-        log("Potion action attempted.");
+        
+        String[] potionNames = game.getHero().getInventory().getPotionNames();
+
+        if (potionNames.length == 0) {
+            log("No potions available.");
+            return;
+        }
+
+        int choice = JOptionPane.showOptionDialog(
+                this,
+                "Choose a potion to use:",
+                "Inventory",
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                potionNames,
+                potionNames[0]
+        );
+
+        if (choice < 0) {
+            log("Potion use cancelled.");
+            return;
+        }
+
+        int beforeHP = game.getHero().getCurrentHealth();
+        String beforeEffects = game.getHero().getActiveEffectsText();
+
+        Potion selectedPotion =
+                game.getHero().getInventory().getPotionAt(choice);
+
+        game.usePotion(selectedPotion);
+
+        int afterHP = game.getHero().getCurrentHealth();
+        String afterEffects = game.getHero().getActiveEffectsText();
+
+        if (beforeHP == afterHP && beforeEffects.equals(afterEffects)) {
+            log(selectedPotion.getName() + " had no effect and was not consumed.");
+        } else {
+            if (beforeHP != afterHP) {
+                log("HP changed: " + beforeHP + " -> " + afterHP);
+            }
+
+            if (!beforeEffects.equals(afterEffects)) {
+                log("Effects changed: " + afterEffects);
+            }
+
+            log(selectedPotion.getName() + " used successfully.");
+        }
+
         updateGUI();
     }
 
     private void buyPotion() {
+        String[] options = {
+                "Healing Potion - 15 gold",
+                "Mana Potion - 20 gold",
+                "Focus Potion - 20 gold",
+                "Shadow Potion - 25 gold",
+                "Defense Potion - 20 gold",
+                "Weapon Upgrade - 45 gold",
+                "Armor Upgrade - 45 gold",
+                "Cancel"
+        };
+
+        int choice = JOptionPane.showOptionDialog(
+                this,
+                "Choose what to buy:",
+                "Shop",
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                options,
+                options[0]
+        );
+
         try {
-            game.getShop().buyPotion(game.getHero());
-            log("Potion bought from shop.");
+            switch (choice) {
+                case 0:
+                    game.getShop().buyPotion(game.getHero());
+                    log("Bought Healing Potion.");
+                    break;
+                case 1:
+                    game.getShop().buyManaPotion(game.getHero());
+                    log("Bought Mana Potion.");
+                    break;
+                case 2:
+                    game.getShop().buyFocusPotion(game.getHero());
+                    log("Bought Focus Potion.");
+                    break;
+                case 3:
+                    game.getShop().buyShadowPotion(game.getHero());
+                    log("Bought Shadow Potion.");
+                    break;
+                case 4:
+                    game.getShop().buyDefensePotion(game.getHero());
+                    log("Bought Defense Potion.");
+                    break;
+                case 5:
+                    game.getShop().upgradeWeapon(game.getHero());
+                    log("Weapon upgraded.");
+                    break;
+                case 6:
+                    game.getShop().upgradeArmor(game.getHero());
+                    log("Armor upgraded.");
+                    break;
+                default:
+                    log("Shop closed.");
+                    break;
+            }
         } catch (IllegalStateException ex) {
             log("Shop error: " + ex.getMessage());
         }
@@ -436,6 +606,7 @@ public class DnDGame extends JFrame {
     }
 
     private void updateGUI() {
+        
         if (game == null) {
             return;
         }
@@ -444,13 +615,29 @@ public class DnDGame extends JFrame {
         Room room = game.getCurrentRoom();
         Monster monster = room.getMonster();
 
-        heroLabel.setText(
+        String heroInfo =
                 "<html>Hero: " + hero.getName()
-                        + "<br>Gold: " + hero.getGold()
-                        + "<br>Level: " + hero.getLevel()
-                        + "<br>Armor: " + hero.getTotalArmorClass()
-                        + "</html>"
-        );
+                + "<br>Gold: " + hero.getGold()
+                + "<br>Level: " + hero.getLevel()
+                + "<br>Armor: " + hero.getTotalArmorClass()
+                + "<br>Items: " + hero.getInventory().getItemCount();
+
+        if (hero instanceof Mage) {
+
+            Mage mage = (Mage) hero;
+
+            heroInfo +=
+                    "<br>Mana: "
+                    + mage.getCurrentMana()
+                    + " / "
+                    + mage.getMaxMana();
+        }
+
+        heroInfo += "</html>";
+
+        heroLabel.setText(heroInfo);
+        
+        
 
         heroHealthBar.setMaximum(hero.getMaxHealth());
         heroHealthBar.setValue(hero.getCurrentHealth());
@@ -488,19 +675,52 @@ public class DnDGame extends JFrame {
         );
         
         heroDiceLabel.setText(
-        "Hero D20 Roll: " + lastHeroRoll
+                "Last D20 Roll: "
+                + game.getCombatManager().getLastD20Roll()
         );
 
         monsterDiceLabel.setText(
                 "Monster D20 Roll: " + lastMonsterRoll
         );
 
-        damageLabel.setText(
-                "Damage Roll: " + lastDamageRoll
+       damageLabel.setText(
+                "Last Damage: "
+                + game.getCombatManager().getLastDamageRoll()
         );
+        
+        effectsLabel.setText(
+                "<html>Effects: "
+                + hero.getActiveEffectsText()
+                + "</html>"
+        );
+        
+        boolean monsterAlive =
+        room.getMonster().isAlive();
+
+        attackButton.setEnabled(monsterAlive);
+        
+        specialAttackButton.setEnabled(
+                monsterAlive
+                && specialAttackReady
+        );
+        
+        if (specialAttackReady) {
+
+            cooldownLabel.setText(
+                    "Special Attack: READY"
+            );
+
+        } else {
+
+            cooldownLabel.setText(
+                    "Special Attack: CHARGING"
+            );
+        }
+        
     }
 
     private void checkGameEnd() {
+        
         if (game.isGameWon()) {
             JOptionPane.showMessageDialog(this, "Victory! You defeated the boss.");
         }
