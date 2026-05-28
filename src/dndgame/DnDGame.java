@@ -272,7 +272,7 @@ public class DnDGame extends JFrame {
         upgradeArmorButton.addActionListener(e -> upgradeArmor());
 
         nextRoomButton.addActionListener(e -> nextRoom());
-        rulesButton.addActionListener(e -> openRuleCustomization());
+   
 
         combatPanel.add(attackButton);
         combatPanel.add(specialAttackButton);
@@ -321,37 +321,114 @@ public class DnDGame extends JFrame {
     }
 
     private void startGame() {
+
         String heroName = nameField.getText().trim();
 
         if (heroName.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Please enter a hero name.");
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Please enter a hero name."
+            );
             return;
         }
 
-        String selectedClass = (String) classBox.getSelectedItem();
+        String selectedClass =
+                (String) classBox.getSelectedItem();
+
         Hero hero;
 
         switch (selectedClass) {
+
             case "Mage":
                 hero = new Mage(heroName);
                 break;
+
             case "Archer":
                 hero = new Archer(heroName);
                 break;
+
             case "Rogue":
                 hero = new Rogue(heroName);
                 break;
+
             default:
                 hero = new Warrior(heroName);
                 break;
         }
 
+        JCheckBox adaptiveAICheck =
+                new JCheckBox("Adaptive AI", true);
+
+        JCheckBox trapsCheck =
+                new JCheckBox("Traps Enabled", true);
+
+        JCheckBox bossRageCheck =
+                new JCheckBox("Boss Rage Mode", false);
+
+        JCheckBox doubleDiceCheck =
+                new JCheckBox("Double Dice Damage", false);
+
+        JCheckBox permadeathCheck =
+                new JCheckBox("Permadeath", false);
+
+        JPanel rulesPanel = new JPanel();
+
+        rulesPanel.setLayout(
+                new BoxLayout(
+                        rulesPanel,
+                        BoxLayout.Y_AXIS
+                )
+        );
+
+        rulesPanel.add(adaptiveAICheck);
+        rulesPanel.add(trapsCheck);
+        rulesPanel.add(bossRageCheck);
+        rulesPanel.add(doubleDiceCheck);
+        rulesPanel.add(permadeathCheck);
+
+        JOptionPane.showMessageDialog(
+                this,
+                rulesPanel,
+                "Custom Rules",
+                JOptionPane.PLAIN_MESSAGE
+        );
+
         game = new Game(hero);
+
+        GameRules rules = game.getGameRules();
+
+        rules.setAdaptiveAIEnabled(
+                adaptiveAICheck.isSelected()
+        );
+
+        rules.setTrapsEnabled(
+                trapsCheck.isSelected()
+        );
+
+        rules.setBossRageModeEnabled(
+                bossRageCheck.isSelected()
+        );
+
+        rules.setDoubleDiceEnabled(
+                doubleDiceCheck.isSelected()
+        );
+
+        rules.setPermadeathEnabled(
+                permadeathCheck.isSelected()
+        );
 
         cardLayout.show(rootPanel, "GAME");
 
         logArea.setText("");
-        log("Welcome, " + hero.getName() + " the " + selectedClass + ".");
+
+        log(
+                "Welcome, "
+                + hero.getName()
+                + " the "
+                + selectedClass
+                + "."
+        );
+
         log("Your adventure begins.");
 
         updateGUI();
@@ -546,65 +623,6 @@ public class DnDGame extends JFrame {
         updateGUI();
     }
 
-    private void openRuleCustomization() {
-        try {
-            String criticalInput = JOptionPane.showInputDialog(
-                    this,
-                    "Critical hit multiplier:",
-                    game.getCombatManager().getCriticalHitRule().getMultiplier()
-            );
-
-            String healingInput = JOptionPane.showInputDialog(
-                    this,
-                    "Potion healing percent:",
-                    game.getHealingRule().getHealingPercent()
-            );
-
-            String bossInput = JOptionPane.showInputDialog(
-                    this,
-                    "Boss unlock room:",
-                    game.getBossUnlockRule().getRequiredRoom()
-            );
-
-            String goldInput = JOptionPane.showInputDialog(
-                    this,
-                    "Base gold reward:",
-                    game.getRewardRule().getBaseGold()
-            );
-
-            String xpInput = JOptionPane.showInputDialog(
-                    this,
-                    "Base experience reward:",
-                    game.getRewardRule().getBaseExperience()
-            );
-
-            if (criticalInput == null || healingInput == null || bossInput == null
-                    || goldInput == null || xpInput == null) {
-                log("Rule customization cancelled.");
-                return;
-            }
-
-            int criticalMultiplier = Integer.parseInt(criticalInput);
-            int healingPercent = Integer.parseInt(healingInput);
-            int bossRoom = Integer.parseInt(bossInput);
-            int baseGold = Integer.parseInt(goldInput);
-            int baseExperience = Integer.parseInt(xpInput);
-
-            game.getCombatManager().getCriticalHitRule().setMultiplier(criticalMultiplier);
-            game.getHealingRule().setHealingPercent(healingPercent);
-            game.getBossUnlockRule().setRequiredRoom(bossRoom);
-            game.getRewardRule().setBaseGold(baseGold);
-            game.getRewardRule().setBaseExperience(baseExperience);
-
-            log("Custom rules updated.");
-
-        } catch (NumberFormatException ex) {
-            log("Invalid input. Please enter numbers only.");
-        }
-
-        updateGUI();
-    }
-
     private void updateGUI() {
         
         if (game == null) {
@@ -665,14 +683,6 @@ public class DnDGame extends JFrame {
         monsterHealthBar.setMaximum(monster.getMaxHealth());
         monsterHealthBar.setValue(monster.getCurrentHealth());
         monsterHealthBar.setString("HP: " + monster.getCurrentHealth() + " / " + monster.getMaxHealth());
-
-        rulesLabel.setText(
-                "<html>Rules:"
-                        + "<br>Critical: x" + game.getCombatManager().getCriticalHitRule().getMultiplier()
-                        + "<br>Healing: " + game.getHealingRule().getHealingPercent() + "%"
-                        + "<br>Boss room: " + game.getBossUnlockRule().getRequiredRoom()
-                        + "</html>"
-        );
         
         heroDiceLabel.setText(
                 "Last D20 Roll: "
@@ -720,6 +730,17 @@ public class DnDGame extends JFrame {
     }
 
     private void checkGameEnd() {
+        
+        if (game.isGameOver()) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Permadeath Enabled.\n"
+                    + "Your journey ends here."
+            );
+
+            System.exit(0);
+        }
         
         if (game.isGameWon()) {
             JOptionPane.showMessageDialog(this, "Victory! You defeated the boss.");

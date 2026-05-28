@@ -6,7 +6,7 @@
  * Date: [Submission Date]
  *
  * Description:
- * This potion restores the hero's health.
+ * Healing potion restores hero health.
  */
 package dndgame;
 
@@ -16,28 +16,19 @@ public class HealingPotion extends Potion {
         super("Healing Potion");
     }
 
-    public void use(Hero hero, HealingRule healingRule) {
+    @Override
+    public void use(Hero hero) {
 
-        if (hero.isFullHealth()) {
-            System.out.println("Health is already full.");
-            return;
-        }
+        int healAmount =
+                hero.getMaxHealth() / 2;
 
-        int healingAmount =
-                healingRule.calculateHealing(hero);
-
-        hero.heal(healingAmount);
+        hero.heal(healAmount);
 
         System.out.println(
                 hero.getName()
                 + " restored "
-                + healingAmount
+                + healAmount
                 + " HP."
         );
-    }
-
-    @Override
-    public void use(Hero hero) {
-        use(hero, new HealingRule(25));
     }
 }

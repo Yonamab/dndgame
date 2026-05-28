@@ -16,7 +16,6 @@ public class CombatManager {
     private Dice dice;
     private EnemyAI enemyAI;
     private PlayerBehaviorTracker behaviorTracker;
-    private CriticalHitRule criticalHitRule;
     private int lastD20Roll;
     private int lastDamageRoll;
 
@@ -24,10 +23,9 @@ public class CombatManager {
         dice = new Dice();
         enemyAI = new EnemyAI();
         behaviorTracker = new PlayerBehaviorTracker();
-        criticalHitRule = new CriticalHitRule(2);
     }
 
-    public void heroAttack(Hero hero, Monster monster) {
+    public void heroAttack(Hero hero, Monster monster,boolean doubleDiceEnabled) {
         behaviorTracker.recordAttack();
         
         int d20 = dice.roll(20);
@@ -41,6 +39,11 @@ public class CombatManager {
             
             int damage = hero.attack(dice);
             damage += hero.getTemporaryDamageBonus();
+            
+            if (doubleDiceEnabled) {
+                damage *= 2;
+            }
+            
             lastDamageRoll = damage;
 
             monster.takeDamage(damage);
@@ -104,13 +107,30 @@ public class CombatManager {
         }
     }
 
-    public void monsterAttack(Monster monster, Hero hero) {
+    public void monsterAttack(
+        Monster monster,
+        Hero hero,
+        boolean adaptiveAIEnabled) 
+    {
         if (!monster.isAlive()) {
             System.out.println(monster.getName() + " cannot attack because it is defeated.");
             return;
         }
 
-        EnemyAction action = enemyAI.chooseAction(monster, hero, behaviorTracker);
+        EnemyAction action;
+
+        if (adaptiveAIEnabled) {
+
+            action = enemyAI.chooseAction(
+                    monster,
+                    hero,
+                    behaviorTracker
+            );
+
+        } else {
+
+            action = EnemyAction.ATTACK;
+        }
 
         System.out.println(monster.getName() + " chooses: " + action);
 
@@ -150,9 +170,13 @@ public class CombatManager {
                         + " extra damage.");
             }
 
-            if (d20 == 20) {
-                damage = criticalHitRule.applyCritical(damage);
-                System.out.println("Enemy critical hit! Damage doubled.");
+           if (d20 == 20) {
+
+                damage *= 2;
+
+                System.out.println(
+                        "Enemy critical hit! Damage doubled."
+                );
             }
 
             hero.takeDamage(damage);
@@ -182,18 +206,11 @@ public class CombatManager {
         behaviorTracker.recordPotionUse();
     }
     
-    public CriticalHitRule getCriticalHitRule() {
-        
-        return criticalHitRule;
-    }
-
-    public void setCriticalHitRule(CriticalHitRule criticalHitRule) {
-
-        this.criticalHitRule = criticalHitRule;
-    }
     
     public int getLastD20Roll() {
-    return lastD20Roll;
+       
+        return lastD20Roll;
+        
     }
 
     public int getLastDamageRoll() {

@@ -17,24 +17,22 @@ public class Game {
     private Room currentRoom;
     private CombatManager combatManager;
     private Shop shop;
-    private HealingRule healingRule;
-    private RewardRule rewardRule;
-    private BossUnlockRule bossUnlockRule;
     private int roomNumber;
     private boolean bossUnlocked;
     private boolean gameWon;
+    private GameRules gameRules;
+    private boolean gameOver;
 
     public Game(Hero hero) {
         this.hero = hero;
         this.combatManager = new CombatManager();
         this.shop = new Shop();
-        this.healingRule = new HealingRule(25);
-        this.rewardRule = new RewardRule(10, 50);
-        this.bossUnlockRule = new BossUnlockRule(5);
         this.roomNumber = 1;
         this.currentRoom = createRoom(roomNumber);
         this.bossUnlocked = false;
         this.gameWon = false;
+        this.gameOver = false;
+        this.gameRules = new GameRules();
     }
 
     public Hero getHero() {
@@ -55,7 +53,7 @@ public class Game {
 
     public void heroAttack() {
         if (currentRoom.hasMonster()) {
-            combatManager.heroAttack(hero, currentRoom.getMonster());
+            combatManager.heroAttack(hero, currentRoom.getMonster(),gameRules.isDoubleDiceEnabled());
 
             if (!currentRoom.getMonster().isAlive()) {
 
@@ -68,8 +66,8 @@ public class Game {
 
                 currentRoom.clearRoom();
 
-                int goldReward = rewardRule.calculateGold(roomNumber);
-                int experienceReward = rewardRule.calculateExperience(roomNumber);
+                int goldReward = 20 + (roomNumber * 10);
+                int experienceReward = 15 + (roomNumber * 8);
 
                 hero.addGold(goldReward);
                 hero.gainExperience(experienceReward);
@@ -113,13 +111,31 @@ public class Game {
         );
     }
 
-    public void monsterAttack() {
-        if (currentRoom.hasMonster()) {
-            combatManager.monsterAttack(currentRoom.getMonster(), hero);
-            hero.updateStatusEffects();
-        } 
-        else {
+   public void monsterAttack() {
+
+        if (!currentRoom.hasMonster()) {
             System.out.println("No monster can attack you.");
+            return;
+        }
+
+        combatManager.monsterAttack(
+                currentRoom.getMonster(),
+                hero,
+                gameRules.isAdaptiveAIEnabled()
+        );
+
+        hero.updateStatusEffects();
+        
+        if (!hero.isAlive()) {
+
+            if (gameRules.isPermadeathEnabled()) {
+
+                gameOver = true;
+
+                System.out.println(
+                        "Permadeath enabled. Game Over."
+                );
+            }
         }
     }
 
@@ -132,12 +148,14 @@ public class Game {
         roomNumber++;
         currentRoom = createRoom(roomNumber);
         
-        if (bossUnlockRule.isBossUnlocked(roomNumber)) {
-            
-            bossUnlocked = true;
-            System.out.println("The boss chamber is now unlocked.");
-        }
+        if (roomNumber >= 5) {
 
+            bossUnlocked = true;
+
+            System.out.println(
+                    "The boss chamber is now unlocked."
+            );
+        }
         System.out.println("You entered room " + roomNumber + ".");
         System.out.println(currentRoom.getDescription());
     }
@@ -184,16 +202,6 @@ public class Game {
         );
     }
     
-    public HealingRule getHealingRule() {
-        
-        return healingRule;
-    }
-
-    public void setHealingRule(HealingRule healingRule) {
-        
-        this.healingRule = healingRule;
-    }
-    
     public void usePotion(Potion potion) {
         if (potion == null) {
             System.out.println("No potion selected.");
@@ -204,7 +212,7 @@ public class Game {
         int beforeHP = hero.getCurrentHealth();
 
         if (potion instanceof HealingPotion) {
-            ((HealingPotion) potion).use(hero, healingRule);
+            ((HealingPotion) potion).use(hero);
         } else {
             potion.use(hero);
         }
@@ -221,22 +229,14 @@ public class Game {
         combatManager.recordPotionUse();
     }
     
-    public RewardRule getRewardRule() {
+    public boolean isGameOver() {
         
-        return rewardRule;
-    }
-
-    public void setRewardRule(RewardRule rewardRule) {
-        this.rewardRule = rewardRule;
+        return gameOver;
     }
     
-    public BossUnlockRule getBossUnlockRule() {
+    public GameRules getGameRules() {
         
-        return bossUnlockRule;
+        return gameRules;
     }
-
-    public void setBossUnlockRule(BossUnlockRule bossUnlockRule) {
-        
-        this.bossUnlockRule = bossUnlockRule;
-    }
+    
 }
