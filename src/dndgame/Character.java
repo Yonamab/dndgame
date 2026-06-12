@@ -3,7 +3,7 @@
  * Author: Yonathan Abaineh Munshea
  * Course: Object Oriented Programming
  * Instructor: Prof. Salvatore Distefano
- * Date: [Submission Date]
+ * Date: [Submission Dat]
  *
  * Description:
  * This class represents a base character in the game.
