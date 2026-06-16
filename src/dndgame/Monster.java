@@ -15,8 +15,9 @@ public class Monster extends Character {
 
     private int damageDie;
     private MonsterPersonality personality;
-   
-    public Monster(String name,
+    private MonsterType monsterType;
+    public Monster(MonsterType monsterType,
+                String name,
                 int maxHealth,
                 int armorClass,
                 int attackBonus,
@@ -26,12 +27,17 @@ public class Monster extends Character {
     super(name, maxHealth, armorClass, attackBonus, damageBonus);
     this.damageDie = damageDie;
     this.personality = personality;
+    
     }
 
     public int getDamageDie() {
         return damageDie;
     }
     
+    public MonsterType getMonsterType() {
+        return monsterType;
+    }
+
     public MonsterPersonality getPersonality() {
         return personality;
     }

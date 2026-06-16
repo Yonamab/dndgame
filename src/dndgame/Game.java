@@ -229,6 +229,7 @@ public class Game {
         );
 
         System.out.println("The Ancient Shadow Dragon appears!");
+        lastBossMessage = "The Ancient Shadow Dragon appears. Final battle begins!";
     }
 
     private Room createRoom(int number) {

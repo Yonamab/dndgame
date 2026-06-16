@@ -32,6 +32,7 @@ public class MonsterFactory {
 
             case 1:
                 return new Monster(
+                        MonsterType.GOBLIN_SCOUT,
                         "Goblin Scout",
                         35 + scalingHP,
                         12 + roomNumber / 3,
@@ -43,6 +44,7 @@ public class MonsterFactory {
 
             case 2:
                 return new Monster(
+                        MonsterType.SKELETON_KNIGHT,
                         "Skeleton Knight",
                         50 + scalingHP,
                         14 + roomNumber / 3,
@@ -54,6 +56,7 @@ public class MonsterFactory {
 
             case 3:
                 return new Monster(
+                        MonsterType.CAVE_TROLL,
                         "Cave Troll",
                         75 + scalingHP,
                         13 + roomNumber / 3,
@@ -65,6 +68,7 @@ public class MonsterFactory {
 
             case 4:
                 return new Monster(
+                        MonsterType.DARK_SORCERER,
                         "Dark Sorcerer",
                         55 + scalingHP,
                         15 + roomNumber / 3,
@@ -76,6 +80,7 @@ public class MonsterFactory {
 
             default:
                 return new Monster(
+                        MonsterType.DIRE_WOLF_ALPHA,
                         "Dire Wolf Alpha",
                         60 + scalingHP,
                         14 + roomNumber / 3,
@@ -90,6 +95,7 @@ public class MonsterFactory {
     public static Monster createBoss(Hero hero) {
 
         return new Monster(
+                MonsterType.ANCIENT_SHADOW_DRAGON,
                 "Ancient Shadow Dragon",
                 180 + hero.getLevel() * 20,
                 18,

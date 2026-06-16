@@ -158,7 +158,7 @@ public class CombatManager {
                 damage += specialDamage;
                 
                 if (bossRageModeEnabled
-                        && monster.getName().equals("Ancient Shadow Dragon")
+                        && monster.getMonsterType() == MonsterType.ANCIENT_SHADOW_DRAGON
                         && monster.getCurrentHealth() < monster.getMaxHealth() / 2) {
 
                     int rageDamage = dice.roll(8);
@@ -180,7 +180,7 @@ public class CombatManager {
                         + " damage.");
             }
 
-            if (monster.getName().equals("Ancient Shadow Dragon")) {
+            if (monster.getMonsterType() == MonsterType.ANCIENT_SHADOW_DRAGON) {
                 
                 int dragonDamage = dice.roll(12);
                 damage += dragonDamage;

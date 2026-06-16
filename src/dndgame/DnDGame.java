@@ -34,6 +34,7 @@ public class DnDGame extends JFrame {
     private JLabel damageLabel;
     private JLabel effectsLabel;
     private JLabel cooldownLabel;
+    private JLabel bossPhaseLabel;
 
     private JProgressBar heroHealthBar;
     private JProgressBar monsterHealthBar;
@@ -111,7 +112,7 @@ public class DnDGame extends JFrame {
         classBox.setMaximumSize(new Dimension(420, 35));
         classBox.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JButton startButton = new JButton("Start Adventure");
+        JButton startButton = new JButton("Begin Your Fate");
         startButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         startButton.addActionListener(e -> startGame());
 
@@ -134,6 +135,7 @@ public class DnDGame extends JFrame {
     }
 
     private JPanel createGameScreen() {
+        
         JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
         mainPanel.setBackground(new Color(15, 15, 25));
         mainPanel.setBorder(new EmptyBorder(15, 15, 15, 15));
@@ -159,16 +161,23 @@ public class DnDGame extends JFrame {
     }
 
     private JPanel createHeroPanel() {
-        JPanel panel = createStyledPanel("Hero");
+        
+        JPanel outerPanel = createStyledPanel("Hero");
+        outerPanel.setLayout(new BorderLayout());
+
+        JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setBackground(new Color(30, 30, 45));
 
         heroLabel = createInfoLabel();
+
         heroHealthBar = new JProgressBar();
-        heroHealthBar.setMaximumSize(new Dimension(550, 22));
-        heroHealthBar.setPreferredSize(new Dimension(550, 22));
+        heroHealthBar.setMaximumSize(new Dimension(500, 22));
+        heroHealthBar.setPreferredSize(new Dimension(500, 22));
+        heroHealthBar.setAlignmentX(Component.CENTER_ALIGNMENT);
         heroHealthBar.setAlignmentX(Component.CENTER_ALIGNMENT);
         heroHealthBar.setStringPainted(true);
-        
+
         weaponLabel = createInfoLabel();
         roomLabel = createInfoLabel();
         rulesLabel = createInfoLabel();
@@ -180,22 +189,27 @@ public class DnDGame extends JFrame {
         panel.add(heroLabel);
         panel.add(Box.createVerticalStrut(10));
         panel.add(heroHealthBar);
-        panel.add(Box.createVerticalStrut(15));
+        panel.add(Box.createVerticalStrut(8));
         panel.add(weaponLabel);
-        panel.add(Box.createVerticalStrut(15));
+        panel.add(Box.createVerticalStrut(8));
         panel.add(roomLabel);
-        panel.add(Box.createVerticalStrut(15));
+        panel.add(Box.createVerticalStrut(8));
         panel.add(rulesLabel);
-        panel.add(Box.createVerticalStrut(15));
+        panel.add(Box.createVerticalStrut(8));
         panel.add(effectsLabel);
-        panel.add(Box.createVerticalStrut(15));
+        panel.add(Box.createVerticalStrut(8));
         panel.add(cooldownLabel);
-        panel.add(Box.createVerticalStrut(15));
+        panel.add(Box.createVerticalStrut(8));
         panel.add(heroDiceLabel);
         panel.add(Box.createVerticalStrut(10));
         panel.add(damageLabel);
 
-        return panel;
+        JScrollPane scrollPane = new JScrollPane(panel);
+        scrollPane.setBorder(null);
+
+        outerPanel.add(scrollPane, BorderLayout.CENTER);
+
+        return outerPanel;
     }
 
     private JPanel createEnemyPanel() {
@@ -209,12 +223,15 @@ public class DnDGame extends JFrame {
         monsterHealthBar.setPreferredSize(new Dimension(550, 22));
         monsterHealthBar.setAlignmentX(Component.CENTER_ALIGNMENT);
         monsterHealthBar.setStringPainted(true);
+        monsterDiceLabel = createInfoLabel();
+        bossPhaseLabel = createInfoLabel();
 
         panel.add(monsterLabel);
         panel.add(Box.createVerticalStrut(10));
         panel.add(monsterHealthBar);
         panel.add(Box.createVerticalStrut(10));
         panel.add(monsterDiceLabel);
+        panel.add(bossPhaseLabel);
 
         return panel;
     }
@@ -247,19 +264,19 @@ public class DnDGame extends JFrame {
         JPanel shopPanel = createStyledPanel("Shop");
         shopPanel.setLayout(new GridLayout(3, 1, 6, 6));
 
-        JPanel worldPanel = createStyledPanel("World / Rules");
+        JPanel worldPanel = createStyledPanel("Explore / Rules");
         worldPanel.setLayout(new GridLayout(2, 1, 6, 6));
 
         attackButton = new JButton("Attack");
         specialAttackButton = new JButton("Special Attack");
-        potionButton = new JButton("Use Potion");
+        potionButton = new JButton("Inventory / Potions");
         bossButton = new JButton("Boss Fight");
 
         shopButton = new JButton("Shop");
         upgradeWeaponButton = new JButton("Upgrade Weapon");
         upgradeArmorButton = new JButton("Upgrade Armor");
 
-        nextRoomButton = new JButton("Next Room");
+        nextRoomButton = new JButton("Explore Next Room");
         rulesButton = new JButton("Customize Rules");
 
         attackButton.addActionListener(e -> attackMonster());
@@ -430,6 +447,12 @@ public class DnDGame extends JFrame {
         );
 
         log("Your adventure begins.");
+        log("Custom rules selected:");
+        log("Adaptive AI: " + game.getGameRules().isAdaptiveAIEnabled());
+        log("Traps: " + game.getGameRules().isTrapsEnabled());
+        log("Boss Rage: " + game.getGameRules().isBossRageModeEnabled());
+        log("Double Dice: " + game.getGameRules().isDoubleDiceEnabled());
+        log("Permadeath: " + game.getGameRules().isPermadeathEnabled());
 
         updateGUI();
     }
@@ -583,8 +606,8 @@ public class DnDGame extends JFrame {
 
         int choice = JOptionPane.showOptionDialog(
                 this,
-                "Choose what to buy:",
-                "Shop",
+                "Gold: " + game.getHero().getGold() + "\nChoose what to buy:",
+                "Dungeon Shop",
                 JOptionPane.DEFAULT_OPTION,
                 JOptionPane.PLAIN_MESSAGE,
                 null,
@@ -649,8 +672,14 @@ public class DnDGame extends JFrame {
     }
 
     private void startBossFight() {
+        
         game.startBossFight();
         log("Boss fight action attempted.");
+        
+        if (!game.getLastBossMessage().isEmpty()) {
+            
+            log(game.getLastBossMessage());
+        }
         updateGUI();
     }
 
@@ -663,9 +692,28 @@ public class DnDGame extends JFrame {
         Hero hero = game.getHero();
         Room room = game.getCurrentRoom();
         Monster monster = room.getMonster();
+        
+        if (monster.getMonsterType() == MonsterType.ANCIENT_SHADOW_DRAGON) {
+
+            int bossHPPercent =
+                    monster.getCurrentHealth() * 100
+                    / monster.getMaxHealth();
+
+            if (bossHPPercent > 50) {
+                
+                bossPhaseLabel.setText("Boss Phase: Shadow Awakening");
+            } else {
+                bossPhaseLabel.setText("Boss Phase: Rage of Fate");
+            }
+
+        } else {
+            
+            bossPhaseLabel.setText("Boss Phase: None");
+        }
 
         String heroInfo =
                 "<html>Hero: " + hero.getName()
+                +"<br>Class: " + hero.getClass().getSimpleName()
                 + "<br>Gold: " + hero.getGold()
                 + "<br>Level: " + hero.getLevel()
                 + "<br>Armor: " + hero.getTotalArmorClass()
@@ -702,6 +750,7 @@ public class DnDGame extends JFrame {
         roomLabel.setText(
                 "<html>Room: " + room.getRoomNumber()
                         + "<br>Boss unlocked: " + game.isBossUnlocked()
+                        + "<br>Room cleared: " + room.isCleared()
                         + "</html>"
         );
         
@@ -718,8 +767,13 @@ public class DnDGame extends JFrame {
         monsterLabel.setText(
                 "<html>Monster: " + monster.getName()
                         + "<br>Personality: " + monster.getPersonality()
+                        + "<br>Armor: " + monster.getArmorClass()
+                        + "<br>Attack Bonus: +" + monster.getAttackBonus()
+                        + "<br>Damage Die: D" + monster.getDamageDie()
                         + "</html>"
         );
+        
+        
 
         monsterHealthBar.setMaximum(monster.getMaxHealth());
         monsterHealthBar.setValue(monster.getCurrentHealth());
