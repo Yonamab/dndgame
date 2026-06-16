@@ -612,9 +612,18 @@ public class DnDGame extends JFrame {
     }
 
     private void nextRoom() {
+        
         game.goToNextRoom();
+        
+        if (!game.getLastTrapMessage().isEmpty()) {
+            
+            log(game.getLastTrapMessage());
+            
+        }
+        
         log("Tried to move to the next room.");
         updateGUI();
+        
     }
 
     private void startBossFight() {

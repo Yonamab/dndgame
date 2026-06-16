@@ -20,8 +20,9 @@ public class Game {
     private int roomNumber;
     private boolean bossUnlocked;
     private boolean gameWon;
-    private GameRules gameRules;
     private boolean gameOver;
+    private GameRules gameRules;
+    private String lastTrapMessage;
 
     public Game(Hero hero) {
         this.hero = hero;
@@ -32,6 +33,7 @@ public class Game {
         this.bossUnlocked = false;
         this.gameWon = false;
         this.gameOver = false;
+        this.lastTrapMessage = "";
         this.gameRules = new GameRules();
     }
 
@@ -140,6 +142,7 @@ public class Game {
     }
 
     public void goToNextRoom() {
+        
         if (!currentRoom.isCleared()) {
             System.out.println("You must clear the current room first.");
             return;
@@ -147,6 +150,14 @@ public class Game {
 
         roomNumber++;
         currentRoom = createRoom(roomNumber);
+        
+        lastTrapMessage = "";
+        
+        if (gameRules.isTrapsEnabled()) {
+            
+            handleTrap();
+            
+        }
         
         if (roomNumber >= 5) {
 
@@ -229,9 +240,52 @@ public class Game {
         combatManager.recordPotionUse();
     }
     
+    private void handleTrap() {
+
+        Dice dice = new Dice();
+        
+        lastTrapMessage = "";
+
+        int trapRoll = dice.roll(20);
+
+        int trapDifficulty = 10 + roomNumber / 3;
+
+        if (trapRoll >= trapDifficulty) {
+
+            lastTrapMessage =
+                    "Trap avoided! D20 roll: "
+                    + trapRoll
+                    + ".";
+
+            System.out.println(lastTrapMessage);
+
+        } 
+        else {
+
+            int trapDamage =
+                    dice.roll(6)
+                    + roomNumber;
+
+            hero.takeDamage(trapDamage);
+
+            lastTrapMessage =
+                    "Trap triggered! You took "
+                    + trapDamage
+                    + " damage.";
+
+            System.out.println(lastTrapMessage);
+        }
+    }
+    
+    
     public boolean isGameOver() {
         
         return gameOver;
+    }
+    
+    public String getLastTrapMessage() {
+        
+        return lastTrapMessage;
     }
     
     public GameRules getGameRules() {
