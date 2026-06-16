@@ -108,10 +108,11 @@ public class CombatManager {
     }
 
     public void monsterAttack(
-        Monster monster,
-        Hero hero,
-        boolean adaptiveAIEnabled) 
-    {
+            Monster monster,
+            Hero hero,
+            boolean adaptiveAIEnabled,
+            boolean bossRageModeEnabled){
+        
         if (!monster.isAlive()) {
             System.out.println(monster.getName() + " cannot attack because it is defeated.");
             return;
@@ -152,8 +153,26 @@ public class CombatManager {
             int damage = dice.roll(monster.getDamageDie()) + monster.getDamageBonus();
 
             if (action == EnemyAction.SPECIAL) {
+                
                 int specialDamage = dice.roll(6);
                 damage += specialDamage;
+                
+                if (bossRageModeEnabled
+                        && monster.getName().equals("Ancient Shadow Dragon")
+                        && monster.getCurrentHealth() < monster.getMaxHealth() / 2) {
+
+                    int rageDamage = dice.roll(8);
+
+                    damage += rageDamage;
+
+                    System.out.println(
+                            "Boss Rage Mode activated! "
+                            + monster.getName()
+                            + " adds "
+                            + rageDamage
+                            + " rage damage."
+                    );
+                }
 
                 System.out.println(monster.getName()
                         + " uses a special attack and adds "
@@ -162,6 +181,7 @@ public class CombatManager {
             }
 
             if (monster.getName().equals("Ancient Shadow Dragon")) {
+                
                 int dragonDamage = dice.roll(12);
                 damage += dragonDamage;
 

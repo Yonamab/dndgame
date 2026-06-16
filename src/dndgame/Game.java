@@ -23,6 +23,7 @@ public class Game {
     private boolean gameOver;
     private GameRules gameRules;
     private String lastTrapMessage;
+    private String lastBossMessage;
 
     public Game(Hero hero) {
         this.hero = hero;
@@ -34,6 +35,7 @@ public class Game {
         this.gameWon = false;
         this.gameOver = false;
         this.lastTrapMessage = "";
+        this.lastBossMessage = "";
         this.gameRules = new GameRules();
     }
 
@@ -119,13 +121,23 @@ public class Game {
             System.out.println("No monster can attack you.");
             return;
         }
-
+        
+        lastBossMessage = "";
+        
         combatManager.monsterAttack(
                 currentRoom.getMonster(),
                 hero,
-                gameRules.isAdaptiveAIEnabled()
+                gameRules.isAdaptiveAIEnabled(),
+                gameRules.isBossRageModeEnabled()
         );
+        
+        if (gameRules.isBossRageModeEnabled()
+                && currentRoom.getMonster().getName().equals("Ancient Shadow Dragon")
+                && currentRoom.getMonster().getCurrentHealth()
+                < currentRoom.getMonster().getMaxHealth() / 2) {
 
+            lastBossMessage = "Boss Rage Mode is active. The dragon is enraged.";
+        }
         hero.updateStatusEffects();
         
         if (!hero.isAlive()) {
@@ -286,6 +298,11 @@ public class Game {
     public String getLastTrapMessage() {
         
         return lastTrapMessage;
+    }
+    
+    public String getLastBossMessage() {
+        
+        return lastBossMessage;
     }
     
     public GameRules getGameRules() {

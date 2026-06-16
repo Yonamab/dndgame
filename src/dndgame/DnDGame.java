@@ -447,6 +447,12 @@ public class DnDGame extends JFrame {
             lastMonsterRoll = (int)(Math.random() * 20) + 1;
 
             game.monsterAttack();
+            
+            if (!game.getLastBossMessage().isEmpty()) {
+                
+                log(game.getLastBossMessage());
+                
+            }
         }
 
         log("Hero rolled D20: " + lastHeroRoll);
@@ -472,6 +478,11 @@ public class DnDGame extends JFrame {
                 && game.getHero().isAlive()) {
 
             game.monsterAttack();
+            
+            if (!game.getLastBossMessage().isEmpty()) {
+                
+                log(game.getLastBossMessage());
+            }
         }
 
         Monster monster =
