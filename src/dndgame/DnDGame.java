@@ -47,14 +47,7 @@ public class DnDGame extends JFrame {
     private JButton shopButton;
     private JButton nextRoomButton;
     private JButton bossButton;
-    private JButton rulesButton;
-    private JButton upgradeWeaponButton;
-    private JButton upgradeArmorButton;
-    
-    private int lastHeroRoll;
-    private int lastMonsterRoll;
-    private int lastDamageRoll;
-    
+   
     private boolean specialAttackReady = true;
 
     public DnDGame() {
@@ -273,11 +266,9 @@ public class DnDGame extends JFrame {
         bossButton = new JButton("Boss Fight");
 
         shopButton = new JButton("Shop");
-        upgradeWeaponButton = new JButton("Upgrade Weapon");
-        upgradeArmorButton = new JButton("Upgrade Armor");
 
         nextRoomButton = new JButton("Explore Next Room");
-        rulesButton = new JButton("Customize Rules");
+
 
         attackButton.addActionListener(e -> attackMonster());
         specialAttackButton.addActionListener(e -> specialAttack());
@@ -285,9 +276,7 @@ public class DnDGame extends JFrame {
         bossButton.addActionListener(e -> startBossFight());
 
         shopButton.addActionListener(e -> buyPotion());
-        upgradeWeaponButton.addActionListener(e -> upgradeWeapon());
-        upgradeArmorButton.addActionListener(e -> upgradeArmor());
-
+ 
         nextRoomButton.addActionListener(e -> nextRoom());
    
 
@@ -297,11 +286,10 @@ public class DnDGame extends JFrame {
         combatPanel.add(bossButton);
 
         shopPanel.add(shopButton);
-        shopPanel.add(upgradeWeaponButton);
-        shopPanel.add(upgradeArmorButton);
+    
 
         worldPanel.add(nextRoomButton);
-        worldPanel.add(rulesButton);
+       
 
         mainButtonPanel.add(combatPanel);
         mainButtonPanel.add(shopPanel);
@@ -411,6 +399,8 @@ public class DnDGame extends JFrame {
         );
 
         game = new Game(hero);
+        setGameButtonsEnabled(true);
+        specialAttackReady = true;
 
         GameRules rules = game.getGameRules();
 
@@ -457,91 +447,68 @@ public class DnDGame extends JFrame {
         updateGUI();
     }
 
-    private void attackMonster() {
-
-        lastHeroRoll = (int)(Math.random() * 20) + 1;
-        lastDamageRoll = (int)(Math.random() * 8) + 1;
+   private void attackMonster() {
 
         game.heroAttack();
-        
-        if (!game.getLastRuleMessage().isEmpty()) {
-           
-            log(game.getLastRuleMessage());
+
+        if (!game.getLastGameMessage().isEmpty()) {
+            log(game.getLastGameMessage());
         }
-        
+
         specialAttackReady = true;
 
-        if (!game.isGameWon() && game.getHero().isAlive()) {
-
-            lastMonsterRoll = (int)(Math.random() * 20) + 1;
+        if (!game.isGameWon()
+                && game.getHero().isAlive()
+                && game.getCurrentRoom().hasMonster()
+                && game.getCurrentRoom().getMonster().isAlive()) {
 
             game.monsterAttack();
-            
-            if (!game.getLastBossMessage().isEmpty()) {
-                
-                log(game.getLastBossMessage());
-                
+
+            if (!game.getLastGameMessage().isEmpty()) {
+                log(game.getLastGameMessage());
             }
         }
-
-        log("Hero rolled D20: " + lastHeroRoll);
-        log("Damage roll: " + lastDamageRoll);
-        log("Monster rolled D20: " + lastMonsterRoll);
 
         updateGUI();
         checkGameEnd();
     }
     
     private void specialAttack() {
-        
-        if (!specialAttackReady) {
 
+        if (!specialAttackReady) {
+            
             log("Special attack is cooling down.");
             return;
         }
 
         game.heroSpecialAttack();
-        
-        if (!game.getLastRuleMessage().isEmpty()) {
-            
-            log(game.getLastRuleMessage());
+
+        if (!game.getLastGameMessage().isEmpty()) {
+            log(game.getLastGameMessage());
         }
+
         specialAttackReady = false;
 
         if (!game.isGameWon()
-                && game.getHero().isAlive()) {
+                && game.getHero().isAlive()
+                && game.getCurrentRoom().hasMonster()
+                && game.getCurrentRoom().getMonster().isAlive()) {
 
             game.monsterAttack();
-            
-            if (!game.getLastBossMessage().isEmpty()) {
-                
-                log(game.getLastBossMessage());
+
+            if (!game.getLastGameMessage().isEmpty()) {
+                log(game.getLastGameMessage());
             }
         }
 
-        Monster monster =
-        game.getCurrentRoom().getMonster();
-
-        String attackName = "Special Attack";
-
-        Hero hero = game.getHero();
-
-        log(
-                hero.getName()
-                + " used "
-                + hero.getSpecialAttackName()
-                + " on "
-                + monster.getName()
-                + "."
-        );
-        
         updateGUI();
         checkGameEnd();
     }
 
     private void usePotion() {
-        
-        String[] potionNames = game.getHero().getInventory().getPotionNames();
+
+        String[] potionNames =
+                game.getHero().getInventory().getPotionNames();
 
         if (potionNames.length == 0) {
             log("No potions available.");
@@ -564,29 +531,13 @@ public class DnDGame extends JFrame {
             return;
         }
 
-        int beforeHP = game.getHero().getCurrentHealth();
-        String beforeEffects = game.getHero().getActiveEffectsText();
-
         Potion selectedPotion =
                 game.getHero().getInventory().getPotionAt(choice);
 
         game.usePotion(selectedPotion);
 
-        int afterHP = game.getHero().getCurrentHealth();
-        String afterEffects = game.getHero().getActiveEffectsText();
-
-        if (beforeHP == afterHP && beforeEffects.equals(afterEffects)) {
-            log(selectedPotion.getName() + " had no effect and was not consumed.");
-        } else {
-            if (beforeHP != afterHP) {
-                log("HP changed: " + beforeHP + " -> " + afterHP);
-            }
-
-            if (!beforeEffects.equals(afterEffects)) {
-                log("Effects changed: " + afterEffects);
-            }
-
-            log(selectedPotion.getName() + " used successfully.");
+        if (!game.getLastGameMessage().isEmpty()) {
+            log(game.getLastGameMessage());
         }
 
         updateGUI();
@@ -594,31 +545,41 @@ public class DnDGame extends JFrame {
 
     private void buyPotion() {
         String[] options = {
-                "Healing Potion - 15 gold",
-                "Mana Potion - 20 gold",
-                "Focus Potion - 20 gold",
-                "Shadow Potion - 25 gold",
-                "Defense Potion - 20 gold",
-                "Weapon Upgrade - 45 gold",
-                "Armor Upgrade - 45 gold",
+                "Healing Potion - " + Shop.HEALING_POTION_COST + " gold",
+                "Mana Potion - " + Shop.MANA_POTION_COST + " gold",
+                "Focus Potion - " + Shop.FOCUS_POTION_COST + " gold",
+                "Shadow Potion - " + Shop.SHADOW_POTION_COST + " gold",
+                "Defense Potion - " + Shop.DEFENSE_POTION_COST + " gold",
+                "Weapon Upgrade - " + Shop.WEAPON_UPGRADE_COST + " gold",
+                "Armor Upgrade - " + Shop.ARMOR_UPGRADE_COST + " gold",
                 "Cancel"
         };
 
-        int choice = JOptionPane.showOptionDialog(
+        JComboBox<String> shopBox = new JComboBox<>(options);
+
+        int result = JOptionPane.showConfirmDialog(
                 this,
-                "Gold: " + game.getHero().getGold() + "\nChoose what to buy:",
-                "Dungeon Shop",
-                JOptionPane.DEFAULT_OPTION,
-                JOptionPane.PLAIN_MESSAGE,
-                null,
-                options,
-                options[0]
+                shopBox,
+                "Gold: " + game.getHero().getGold() + " | Dungeon Shop",
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.PLAIN_MESSAGE
         );
+
+        int choice;
+
+        if (result == JOptionPane.OK_OPTION) {
+            
+            choice = shopBox.getSelectedIndex();
+        } 
+        
+        else {
+            choice = 7;
+        }
 
         try {
             switch (choice) {
                 case 0:
-                    game.getShop().buyPotion(game.getHero());
+                    game.getShop().buyHealingPotion(game.getHero());
                     log("Bought Healing Potion.");
                     break;
                 case 1:
@@ -660,13 +621,12 @@ public class DnDGame extends JFrame {
         
         game.goToNextRoom();
         
-        if (!game.getLastTrapMessage().isEmpty()) {
-            
-            log(game.getLastTrapMessage());
-            
+        if (!game.getLastGameMessage().isEmpty()) {
+           
+            log(game.getLastGameMessage());
         }
         
-        log("Tried to move to the next room.");
+       
         updateGUI();
         
     }
@@ -674,12 +634,12 @@ public class DnDGame extends JFrame {
     private void startBossFight() {
         
         game.startBossFight();
-        log("Boss fight action attempted.");
         
-        if (!game.getLastBossMessage().isEmpty()) {
+        if (!game.getLastGameMessage().isEmpty()) {
             
-            log(game.getLastBossMessage());
+            log(game.getLastGameMessage());
         }
+        
         updateGUI();
     }
 
@@ -785,7 +745,8 @@ public class DnDGame extends JFrame {
         );
 
         monsterDiceLabel.setText(
-                "Monster D20 Roll: " + lastMonsterRoll
+                "Last Combat D20 Roll: "
+                + game.getCombatManager().getLastD20Roll()
         );
 
         damageLabel.setText(
@@ -825,24 +786,44 @@ public class DnDGame extends JFrame {
     }
 
     private void checkGameEnd() {
-        
-        if (game.isGameOver()) {
+
+    if (game.isGameOver()) {
+
+        setGameButtonsEnabled(false);
+
+        JOptionPane.showMessageDialog(
+                this,
+                "Permadeath Enabled.\n"
+                + "Your journey ends here."
+        );
+
+        cardLayout.show(rootPanel, "START");
+        return;
+    }
+
+    if (game.isGameWon()) {
+
+            setGameButtonsEnabled(false);
 
             JOptionPane.showMessageDialog(
                     this,
-                    "Permadeath Enabled.\n"
-                    + "Your journey ends here."
+                    "Victory! You defeated the boss."
             );
 
-            System.exit(0);
-        }
-        
-        if (game.isGameWon()) {
-            JOptionPane.showMessageDialog(this, "Victory! You defeated the boss.");
+            cardLayout.show(rootPanel, "START");
+            return;
         }
 
         if (!game.getHero().isAlive()) {
-            JOptionPane.showMessageDialog(this, "Defeat! Your hero has fallen.");
+
+            setGameButtonsEnabled(false);
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Defeat! Your hero has fallen."
+            );
+
+            cardLayout.show(rootPanel, "START");
         }
     }
 
@@ -871,6 +852,18 @@ public class DnDGame extends JFrame {
         }
 
         updateGUI();
+    }
+    
+    private void setGameButtonsEnabled(boolean enabled) {
+
+        attackButton.setEnabled(enabled);
+        specialAttackButton.setEnabled(enabled);
+        potionButton.setEnabled(enabled);
+        shopButton.setEnabled(enabled);
+        nextRoomButton.setEnabled(enabled);
+        bossButton.setEnabled(enabled);
+       
+        
     }
     
     private JPanel createBackgroundPanel(String imagePath) {

@@ -7,7 +7,7 @@
  *
  * Description:
  * This class manages the main game flow.
- * It connects the hero, room, combat manager, and shop.
+ * It connects the hero, room, combat manager, shop, rules, and messages.
  */
 package dndgame;
 
@@ -22,10 +22,8 @@ public class Game {
     private boolean gameWon;
     private boolean gameOver;
     private GameRules gameRules;
-    
-    private String lastTrapMessage;
-    private String lastBossMessage;
-    private String lastRuleMessage;
+
+    private String lastGameMessage;
 
     public Game(Hero hero) {
         this.hero = hero;
@@ -36,16 +34,14 @@ public class Game {
         this.bossUnlocked = false;
         this.gameWon = false;
         this.gameOver = false;
-        this.lastTrapMessage = "";
-        this.lastBossMessage = "";
-        this.lastRuleMessage = "";
         this.gameRules = new GameRules();
+        this.lastGameMessage = "";
     }
 
     public Hero getHero() {
         return hero;
     }
-    
+
     public CombatManager getCombatManager() {
         return combatManager;
     }
@@ -58,148 +54,10 @@ public class Game {
         return shop;
     }
 
-    public void heroAttack() {
-        if (currentRoom.hasMonster()) {
-            
-            lastRuleMessage = "";
-            combatManager.heroAttack(hero, currentRoom.getMonster(),gameRules.isDoubleDiceEnabled());
-            
-            if (gameRules.isDoubleDiceEnabled()) {
-                lastRuleMessage = "Double Dice Damage rule is active.";
-            }
-
-            if (!currentRoom.getMonster().isAlive()) {
-
-                if (currentRoom.getMonster().getName().equals("Ancient Shadow Dragon")) {
-                    gameWon = true;
-                    currentRoom.clearRoom();
-                    System.out.println("Victory! You defeated the Ancient Shadow Dragon.");
-                    return;
-                }
-
-                currentRoom.clearRoom();
-
-                int goldReward = 20 + (roomNumber * 10);
-                int experienceReward = 15 + (roomNumber * 8);
-
-                hero.addGold(goldReward);
-                hero.gainExperience(experienceReward);
-
-                System.out.println("Room cleared!");
-                System.out.println("You gained "
-                        + goldReward
-                        + " gold and "
-                        + experienceReward
-                        + " experience.");
-            }
-        } 
-        else {
-            System.out.println("There is no monster to attack.");
-        }
-    }
-    
-    public void heroSpecialAttack() {
-
-        if (!currentRoom.hasMonster()) {
-
-            System.out.println(
-                    "No monster available."
-            );
-
-            return;
-        }
-
-        if (!currentRoom.getMonster().isAlive()) {
-
-            System.out.println(
-                    "Monster already defeated."
-            );
-
-            return;
-        }
-        
-        lastRuleMessage = "";
-        
-        combatManager.heroSpecialAttack(
-                hero,
-                currentRoom.getMonster()
-        );
-        
-        if (gameRules.isDoubleDiceEnabled()) {
-            
-            lastRuleMessage = "Double Dice Damage rule is active.";
-            
-        }
+    public GameRules getGameRules() {
+        return gameRules;
     }
 
-   public void monsterAttack() {
-
-        if (!currentRoom.hasMonster()) {
-            System.out.println("No monster can attack you.");
-            return;
-        }
-        
-        lastBossMessage = "";
-        
-        combatManager.monsterAttack(
-                currentRoom.getMonster(),
-                hero,
-                gameRules.isAdaptiveAIEnabled(),
-                gameRules.isBossRageModeEnabled()
-        );
-        
-        if (gameRules.isBossRageModeEnabled()
-                && currentRoom.getMonster().getName().equals("Ancient Shadow Dragon")
-                && currentRoom.getMonster().getCurrentHealth()
-                < currentRoom.getMonster().getMaxHealth() / 2) {
-
-            lastBossMessage = "Boss Rage Mode is active. The dragon is enraged.";
-        }
-        hero.updateStatusEffects();
-        
-        if (!hero.isAlive()) {
-
-            if (gameRules.isPermadeathEnabled()) {
-
-                gameOver = true;
-
-                System.out.println(
-                        "Permadeath enabled. Game Over."
-                );
-            }
-        }
-    }
-
-    public void goToNextRoom() {
-        
-        if (!currentRoom.isCleared()) {
-            System.out.println("You must clear the current room first.");
-            return;
-        }
-
-        roomNumber++;
-        currentRoom = createRoom(roomNumber);
-        
-        lastTrapMessage = "";
-        
-        if (gameRules.isTrapsEnabled()) {
-            
-            handleTrap();
-            
-        }
-        
-        if (roomNumber >= 5) {
-
-            bossUnlocked = true;
-
-            System.out.println(
-                    "The boss chamber is now unlocked."
-            );
-        }
-        System.out.println("You entered room " + roomNumber + ".");
-        System.out.println(currentRoom.getDescription());
-    }
-    
     public boolean isBossUnlocked() {
         return bossUnlocked;
     }
@@ -208,19 +66,226 @@ public class Game {
         return gameWon;
     }
 
-    public void startBossFight() {
-        if (!bossUnlocked) {
-            System.out.println("Boss room is locked. Reach room 5 first.");
+    public boolean isGameOver() {
+        return gameOver;
+    }
+
+    public String getLastGameMessage() {
+        return lastGameMessage;
+    }
+
+    private void clearMessage() {
+        lastGameMessage = "";
+    }
+
+    private void addMessage(String message) {
+        lastGameMessage += message + "\n";
+        System.out.println(message);
+    }
+
+    public void heroAttack() {
+        
+        clearMessage();
+
+        if (!currentRoom.hasMonster()) {
+            addMessage("There is no monster to attack.");
             return;
         }
 
+        Monster monster = currentRoom.getMonster();
+
+        if (!monster.isAlive()) {
+            
+            addMessage("Monster already defeated.");
+            return;
+            
+        }
+
+        addMessage(hero.getName() + " attacks " + monster.getName() + ".");
+
+        combatManager.heroAttack(
+                hero,
+                monster,
+                gameRules.isDoubleDiceEnabled()
+        );
+
+        addMessage("D20 Roll: " + combatManager.getLastD20Roll());
+        addMessage("Damage dealt: " + combatManager.getLastDamageRoll());
+
+        if (gameRules.isDoubleDiceEnabled()) {
+            addMessage("Double Dice Damage rule is active.");
+        }
+
+        if (!monster.isAlive()) {
+
+            if (monster.getMonsterType() == MonsterType.ANCIENT_SHADOW_DRAGON) {
+                gameWon = true;
+                currentRoom.clearRoom();
+                addMessage("Victory! You defeated the Ancient Shadow Dragon.");
+                return;
+            }
+
+            currentRoom.clearRoom();
+
+            int goldReward = 15 + (roomNumber * 7);
+            int experienceReward = 15 + (roomNumber * 8);
+
+            hero.addGold(goldReward);
+            hero.gainExperience(experienceReward);
+
+            addMessage(monster.getName() + " was defeated.");
+            addMessage("Room cleared.");
+            addMessage("You gained " + goldReward + " gold.");
+            addMessage("You gained " + experienceReward + " experience.");
+        }
+    }
+
+    public void heroSpecialAttack() {
+        clearMessage();
+
+        if (!currentRoom.hasMonster()) {
+            addMessage("No monster available.");
+            return;
+        }
+
+        Monster monster = currentRoom.getMonster();
+
+        if (!monster.isAlive()) {
+            addMessage("Monster already defeated.");
+            return;
+        }
+
+        addMessage(hero.getName()
+                + " used "
+                + hero.getSpecialAttackName()
+                + " on "
+                + monster.getName()
+                + ".");
+
+        combatManager.heroSpecialAttack(hero, monster);
+
+        addMessage("D20 Roll: " + combatManager.getLastD20Roll());
+        addMessage("Special damage dealt: " + combatManager.getLastDamageRoll());
+
+        if (gameRules.isDoubleDiceEnabled()) {
+            addMessage("Double Dice Damage rule is active.");
+        }
+
+        if (!monster.isAlive()) {
+
+            if (monster.getMonsterType() == MonsterType.ANCIENT_SHADOW_DRAGON) {
+                gameWon = true;
+                currentRoom.clearRoom();
+                addMessage("Victory! You defeated the Ancient Shadow Dragon.");
+                return;
+            }
+
+            currentRoom.clearRoom();
+
+            int goldReward = 15 + (roomNumber * 7);
+            int experienceReward = 15 + (roomNumber * 8);
+
+            hero.addGold(goldReward);
+            hero.gainExperience(experienceReward);
+
+            addMessage(monster.getName() + " was defeated.");
+            addMessage("Room cleared.");
+            addMessage("You gained " + goldReward + " gold.");
+            addMessage("You gained " + experienceReward + " experience.");
+        }
+    }
+
+    public void monsterAttack() {
+        clearMessage();
+
+        if (!currentRoom.hasMonster()) {
+            addMessage("No monster can attack you.");
+            return;
+        }
+
+        Monster monster = currentRoom.getMonster();
+
+        if (!monster.isAlive()) {
+            addMessage("The monster is defeated and cannot attack.");
+            return;
+        }
+
+        addMessage(monster.getName() + " prepares to attack.");
+
+        combatManager.monsterAttack(
+                monster,
+                hero,
+                gameRules.isAdaptiveAIEnabled(),
+                gameRules.isBossRageModeEnabled()
+        );
+
+        addMessage("Enemy D20 Roll: " + combatManager.getLastD20Roll());
+        addMessage("Enemy damage: " + combatManager.getLastDamageRoll());
+
+      
+
+        if (gameRules.isBossRageModeEnabled()
+                && monster.getMonsterType() == MonsterType.ANCIENT_SHADOW_DRAGON
+                && monster.getCurrentHealth() < monster.getMaxHealth() / 2) {
+
+            addMessage("Boss Rage Mode is active. The dragon is enraged.");
+        }
+
+        hero.updateStatusEffects();
+
+        if (!hero.isAlive()) {
+
+            addMessage(hero.getName() + " has fallen.");
+
+            if (gameRules.isPermadeathEnabled()) {
+                gameOver = true;
+                addMessage("Permadeath enabled. Game Over.");
+            }
+        }
+    }
+
+    public void goToNextRoom() {
+        clearMessage();
+
+        if (!currentRoom.isCleared()) {
+            addMessage("You must clear the current room first.");
+            return;
+        }
+
+        roomNumber++;
+        currentRoom = createRoom(roomNumber);
+
+        addMessage("You entered room " + roomNumber + ".");
+        addMessage(currentRoom.getDescription());
+
+        if (gameRules.isTrapsEnabled()) {
+            handleTrap();
+        }
+
+        if (roomNumber >= 6) {
+            bossUnlocked = true;
+            addMessage("The boss chamber is now unlocked.");
+        }
+
         if (currentRoom.hasMonster()) {
-            System.out.println("Defeat the current monster first.");
+            addMessage("A " + currentRoom.getMonster().getName() + " appears.");
+        }
+    }
+
+    public void startBossFight() {
+        clearMessage();
+
+        if (!bossUnlocked) {
+            addMessage("Boss room is locked. Reach room 6 first.");
+            return;
+        }
+
+        if (currentRoom.hasMonster() && currentRoom.getMonster().isAlive()) {
+            addMessage("Defeat the current monster first.");
             return;
         }
 
         Monster boss = MonsterFactory.createBoss(hero);
-        
 
         currentRoom = new Room(
                 999,
@@ -228,12 +293,76 @@ public class Game {
                 boss
         );
 
-        System.out.println("The Ancient Shadow Dragon appears!");
-        lastBossMessage = "The Ancient Shadow Dragon appears. Final battle begins!";
+        addMessage("The Ancient Shadow Dragon appears.");
+        addMessage("Final battle begins.");
+    }
+
+    public void usePotion(Potion potion) {
+        clearMessage();
+
+        if (potion == null) {
+            addMessage("No potion selected.");
+            return;
+        }
+
+        String beforeEffects = hero.getActiveEffectsText();
+        int beforeHP = hero.getCurrentHealth();
+
+        addMessage(hero.getName() + " used " + potion.getName() + ".");
+
+        potion.use(hero);
+
+        String afterEffects = hero.getActiveEffectsText();
+        int afterHP = hero.getCurrentHealth();
+
+        if (beforeEffects.equals(afterEffects) && beforeHP == afterHP) {
+            addMessage(potion.getName() + " had no effect and was not consumed.");
+            return;
+        }
+
+        if (beforeHP != afterHP) {
+            addMessage("HP changed: " + beforeHP + " -> " + afterHP + ".");
+        }
+
+        if (!beforeEffects.equals(afterEffects)) {
+            addMessage("Active effects: " + afterEffects);
+        }
+
+        hero.getInventory().removeItem(potion);
+        combatManager.recordPotionUse();
+    }
+
+    private void handleTrap() {
+        Dice dice = new Dice();
+
+        int trapRoll = dice.roll(20);
+        int trapDifficulty = 10 + roomNumber / 3;
+
+        if (trapRoll >= trapDifficulty) {
+
+            addMessage("Trap avoided! D20 roll: " + trapRoll + ".");
+
+        } else {
+
+            int trapDamage = dice.roll(6) + roomNumber;
+
+            hero.takeDamage(trapDamage);
+
+            addMessage("Trap triggered! D20 roll: " + trapRoll + ".");
+            addMessage("You took " + trapDamage + " trap damage.");
+
+            if (!hero.isAlive()) {
+                addMessage(hero.getName() + " was killed by a trap.");
+
+                if (gameRules.isPermadeathEnabled()) {
+                    gameOver = true;
+                    addMessage("Permadeath enabled. Game Over.");
+                }
+            }
+        }
     }
 
     private Room createRoom(int number) {
-        
         Monster monster = MonsterFactory.createMonster(number, hero);
 
         return new Room(
@@ -242,95 +371,4 @@ public class Game {
                 monster
         );
     }
-    
-    public void usePotion(Potion potion) {
-        if (potion == null) {
-            System.out.println("No potion selected.");
-            return;
-        }
-
-        String beforeEffects = hero.getActiveEffectsText();
-        int beforeHP = hero.getCurrentHealth();
-
-        if (potion instanceof HealingPotion) {
-            ((HealingPotion) potion).use(hero);
-        } else {
-            potion.use(hero);
-        }
-
-        String afterEffects = hero.getActiveEffectsText();
-        int afterHP = hero.getCurrentHealth();
-
-        if (beforeEffects.equals(afterEffects) && beforeHP == afterHP) {
-            System.out.println("Potion had no effect and was not consumed.");
-            return;
-        }
-
-        hero.getInventory().removeItem(potion);
-        combatManager.recordPotionUse();
-    }
-    
-    private void handleTrap() {
-
-        Dice dice = new Dice();
-        
-        lastTrapMessage = "";
-
-        int trapRoll = dice.roll(20);
-
-        int trapDifficulty = 10 + roomNumber / 3;
-
-        if (trapRoll >= trapDifficulty) {
-
-            lastTrapMessage =
-                    "Trap avoided! D20 roll: "
-                    + trapRoll
-                    + ".";
-
-            System.out.println(lastTrapMessage);
-
-        } 
-        else {
-
-            int trapDamage =
-                    dice.roll(6)
-                    + roomNumber;
-
-            hero.takeDamage(trapDamage);
-
-            lastTrapMessage =
-                    "Trap triggered! You took "
-                    + trapDamage
-                    + " damage.";
-
-            System.out.println(lastTrapMessage);
-        }
-    }
-    
-    
-    public boolean isGameOver() {
-        
-        return gameOver;
-    }
-    
-    public String getLastTrapMessage() {
-        
-        return lastTrapMessage;
-    }
-    
-    public String getLastBossMessage() {
-        
-        return lastBossMessage;
-    }
-    
-    public String getLastRuleMessage() {
-        
-        return lastRuleMessage;
-    }
-
-    public GameRules getGameRules() {
-        
-        return gameRules;
-    }
-    
 }

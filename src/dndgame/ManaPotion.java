@@ -25,7 +25,7 @@ public class ManaPotion extends Potion {
         }
 
         Mage mage = (Mage) hero;
-        mage.restoreMana(30);
+        mage.restoreMana(15);
 
         System.out.println(hero.getName() + " restored 30 mana.");
     }

@@ -12,26 +12,25 @@ package dndgame;
 
 public class Shop {
 
-    private int potionPrice;
+    public static final int HEALING_POTION_COST = 20;
+    public static final int MANA_POTION_COST = 20;
+    public static final int FOCUS_POTION_COST = 30;
+    public static final int SHADOW_POTION_COST = 30;
+    public static final int DEFENSE_POTION_COST = 25;
+    public static final int WEAPON_UPGRADE_COST = 60;
+    public static final int ARMOR_UPGRADE_COST = 60;
+    
+    public void buyHealingPotion(Hero hero) {
 
-    public Shop() {
-        this.potionPrice = 15;
-    }
-
-    public void buyPotion(Hero hero) {
-        
-        int potionPrice = 15;
-
-        hero.spendGold(potionPrice);
+        hero.spendGold(HEALING_POTION_COST);
         hero.getInventory().addItem(new HealingPotion());
 
         System.out.println(hero.getName() + " bought a healing potion.");
     }
     
     public void upgradeWeapon(Hero hero) {
-        int upgradeCost = 45;
 
-        hero.spendGold(upgradeCost);
+        hero.spendGold(WEAPON_UPGRADE_COST);
 
         Weapon weapon = hero.getEquippedWeapon();
         weapon.setDamageBonus(weapon.getDamageBonus() + 2);
@@ -43,45 +42,40 @@ public class Shop {
     }
     
     public void upgradeArmor(Hero hero) {
-        int upgradeCost = 45;
 
-        hero.spendGold(upgradeCost);
+        hero.spendGold(ARMOR_UPGRADE_COST);
         hero.increaseArmorBonus(2);
 
         System.out.println(hero.getName() + "'s armor was upgraded.");
     }
     
     public void buyManaPotion(Hero hero) {
-        int cost = 20;
 
-        hero.spendGold(cost);
+        hero.spendGold(MANA_POTION_COST);
         hero.getInventory().addItem(new ManaPotion());
 
         System.out.println(hero.getName() + " bought a mana potion.");
     }
 
     public void buyFocusPotion(Hero hero) {
-        int cost = 20;
 
-        hero.spendGold(cost);
+        hero.spendGold(FOCUS_POTION_COST);
         hero.getInventory().addItem(new FocusPotion());
 
         System.out.println(hero.getName() + " bought a focus potion.");
     }
 
     public void buyShadowPotion(Hero hero) {
-        int cost = 25;
 
-        hero.spendGold(cost);
+        hero.spendGold(SHADOW_POTION_COST);
         hero.getInventory().addItem(new ShadowPotion());
 
         System.out.println(hero.getName() + " bought a shadow potion.");
     }
 
     public void buyDefensePotion(Hero hero) {
-        int cost = 20;
 
-        hero.spendGold(cost);
+        hero.spendGold(DEFENSE_POTION_COST);
         hero.getInventory().addItem(new DefensePotion());
 
         System.out.println(hero.getName() + " bought a defense potion.");
