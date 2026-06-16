@@ -39,32 +39,52 @@ public class EnemyAI {
 
         switch (monster.getPersonality()) {
 
-            case AGGRESSIVE:
-                attackWeight += 20;
-                defendWeight -= 10;
-                break;
-
-            case DEFENSIVE:
-                defendWeight += 20;
-                attackWeight -= 10;
-                break;
-
             case COWARDLY:
+                defendWeight += 10;
+
                 if (monster.getCurrentHealth()
-                        < monster.getMaxHealth() / 3) {
+                        < monster.getMaxHealth() / 2) {
 
                     defendWeight += 30;
                     attackWeight -= 15;
+                    specialWeight -= 10;
                 }
                 break;
 
-            case STRATEGIC:
+            case AGGRESSIVE:
+                attackWeight += 25;
                 specialWeight += 15;
+                defendWeight -= 15;
+                break;
+
+            case STRATEGIC:
+                if (hero.getCurrentHealth()
+                        < hero.getMaxHealth() / 2) {
+
+                    attackWeight += 20;
+                    specialWeight += 20;
+                }
+
+                if (tracker.usesPotionsOften()) {
+                    specialWeight += 20;
+                }
+
+                if (monster.getCurrentHealth()
+                        < monster.getMaxHealth() / 3) {
+
+                    defendWeight += 20;
+                }
                 break;
 
             case SIMPLE:
-                attackWeight += 10;
-                specialWeight -= 10;
+                attackWeight += 20;
+                specialWeight -= 15;
+                defendWeight -= 5;
+                break;
+
+            case DEFENSIVE:
+                defendWeight += 30;
+                attackWeight -= 10;
                 break;
         }
 
@@ -124,20 +144,24 @@ public class EnemyAI {
         }
     }
 
-    private EnemyAction randomAction(
-            boolean specialAvailable) {
+    private EnemyAction randomAction(boolean specialAvailable) {
 
-        int roll =
-                random.nextInt(
-                        specialAvailable ? 3 : 2);
+        int roll = random.nextInt(specialAvailable ? 3 : 2);
 
         if (roll == 0) {
+            
             return EnemyAction.ATTACK;
 
-        } else if (roll == 1) {
+        } 
+        
+        else if (roll == 1) {
+            
             return EnemyAction.DEFEND;
 
-        } else {
+        } 
+        
+        else {
+            
             specialCooldown = 3;
             return EnemyAction.SPECIAL;
         }
