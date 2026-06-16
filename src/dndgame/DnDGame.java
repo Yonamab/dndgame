@@ -440,6 +440,12 @@ public class DnDGame extends JFrame {
         lastDamageRoll = (int)(Math.random() * 8) + 1;
 
         game.heroAttack();
+        
+        if (!game.getLastRuleMessage().isEmpty()) {
+           
+            log(game.getLastRuleMessage());
+        }
+        
         specialAttackReady = true;
 
         if (!game.isGameWon() && game.getHero().isAlive()) {
@@ -472,6 +478,11 @@ public class DnDGame extends JFrame {
         }
 
         game.heroSpecialAttack();
+        
+        if (!game.getLastRuleMessage().isEmpty()) {
+            
+            log(game.getLastRuleMessage());
+        }
         specialAttackReady = false;
 
         if (!game.isGameWon()
@@ -693,6 +704,16 @@ public class DnDGame extends JFrame {
                         + "<br>Boss unlocked: " + game.isBossUnlocked()
                         + "</html>"
         );
+        
+        rulesLabel.setText(
+                "<html>Rules:"
+                        + "<br>Adaptive AI: " + game.getGameRules().isAdaptiveAIEnabled()
+                        + "<br>Traps: " + game.getGameRules().isTrapsEnabled()
+                        + "<br>Boss Rage: " + game.getGameRules().isBossRageModeEnabled()
+                        + "<br>Double Dice: " + game.getGameRules().isDoubleDiceEnabled()
+                        + "<br>Permadeath: " + game.getGameRules().isPermadeathEnabled()
+                        + "</html>"
+        );
 
         monsterLabel.setText(
                 "<html>Monster: " + monster.getName()
@@ -713,7 +734,7 @@ public class DnDGame extends JFrame {
                 "Monster D20 Roll: " + lastMonsterRoll
         );
 
-       damageLabel.setText(
+        damageLabel.setText(
                 "Last Damage: "
                 + game.getCombatManager().getLastDamageRoll()
         );

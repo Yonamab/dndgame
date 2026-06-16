@@ -22,8 +22,10 @@ public class Game {
     private boolean gameWon;
     private boolean gameOver;
     private GameRules gameRules;
+    
     private String lastTrapMessage;
     private String lastBossMessage;
+    private String lastRuleMessage;
 
     public Game(Hero hero) {
         this.hero = hero;
@@ -36,6 +38,7 @@ public class Game {
         this.gameOver = false;
         this.lastTrapMessage = "";
         this.lastBossMessage = "";
+        this.lastRuleMessage = "";
         this.gameRules = new GameRules();
     }
 
@@ -57,7 +60,13 @@ public class Game {
 
     public void heroAttack() {
         if (currentRoom.hasMonster()) {
+            
+            lastRuleMessage = "";
             combatManager.heroAttack(hero, currentRoom.getMonster(),gameRules.isDoubleDiceEnabled());
+            
+            if (gameRules.isDoubleDiceEnabled()) {
+                lastRuleMessage = "Double Dice Damage rule is active.";
+            }
 
             if (!currentRoom.getMonster().isAlive()) {
 
@@ -108,11 +117,19 @@ public class Game {
 
             return;
         }
-
+        
+        lastRuleMessage = "";
+        
         combatManager.heroSpecialAttack(
                 hero,
                 currentRoom.getMonster()
         );
+        
+        if (gameRules.isDoubleDiceEnabled()) {
+            
+            lastRuleMessage = "Double Dice Damage rule is active.";
+            
+        }
     }
 
    public void monsterAttack() {
@@ -305,6 +322,11 @@ public class Game {
         return lastBossMessage;
     }
     
+    public String getLastRuleMessage() {
+        
+        return lastRuleMessage;
+    }
+
     public GameRules getGameRules() {
         
         return gameRules;
