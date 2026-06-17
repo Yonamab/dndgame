@@ -14,7 +14,9 @@ package dndgame;
 public class Warrior extends Hero {
 
     public Warrior(String name) {
-        super(name, 125, 16, 5, 4);
+        
+        super(name, 125, 16, 5, 4, 60);
+        
         setEquippedWeapon(new Sword());
     }
 

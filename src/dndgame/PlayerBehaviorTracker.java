@@ -15,6 +15,7 @@ public class PlayerBehaviorTracker {
 
     private int attackCount;
     private int potionUseCount;
+    private int defendUses;
 
     public PlayerBehaviorTracker() {
         attackCount = 0;
@@ -43,5 +44,15 @@ public class PlayerBehaviorTracker {
 
     public boolean usesPotionsOften() {
         return potionUseCount >= 2;
+    }
+    
+    public void recordDefendUse() {
+        
+        defendUses++;
+    }
+    
+    public boolean defendsOften() {
+        
+        return defendUses >= 2;
     }
 }

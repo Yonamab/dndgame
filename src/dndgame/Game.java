@@ -213,10 +213,11 @@ public class Game {
         addMessage(monster.getName() + " prepares to attack.");
 
         combatManager.monsterAttack(
-                monster,
+                currentRoom.getMonster(),
                 hero,
                 gameRules.isAdaptiveAIEnabled(),
-                gameRules.isBossRageModeEnabled()
+                gameRules.isBossRageModeEnabled(),
+                gameRules.isDoubleDiceEnabled()
         );
 
         addMessage("Enemy D20 Roll: " + combatManager.getLastD20Roll());
@@ -233,15 +234,7 @@ public class Game {
 
         hero.updateStatusEffects();
 
-        if (!hero.isAlive()) {
-
-            addMessage(hero.getName() + " has fallen.");
-
-            if (gameRules.isPermadeathEnabled()) {
-                gameOver = true;
-                addMessage("Permadeath enabled. Game Over.");
-            }
-        }
+        handleHeroDeath();
     }
 
     public void goToNextRoom() {
@@ -351,13 +344,47 @@ public class Game {
             addMessage("Trap triggered! D20 roll: " + trapRoll + ".");
             addMessage("You took " + trapDamage + " trap damage.");
 
-            if (!hero.isAlive()) {
-                addMessage(hero.getName() + " was killed by a trap.");
+            handleHeroDeath();
+        }
+    }
+    
+    public void heroDefend() {
+        
+        clearMessage();
 
-                if (gameRules.isPermadeathEnabled()) {
-                    gameOver = true;
-                    addMessage("Permadeath enabled. Game Over.");
-                }
+        hero.defend();
+
+        combatManager.recordDefendUse();
+
+        addMessage(
+                hero.getName()
+                + " takes a defensive stance. Next damage will be reduced by "
+                + hero.getDefenseReductionPercent()
+                + "%."
+        );
+    }
+    
+    private void handleHeroDeath() {
+
+        if (!hero.isAlive()) {
+
+            if (gameRules.isPermadeathEnabled()) {
+
+                gameOver = true;
+
+                addMessage(
+                        "Permadeath enabled. Game Over."
+                );
+
+            } else {
+
+                hero.refillHealth();
+
+                addMessage(
+                        "Permadeath is OFF. "
+                        + hero.getName()
+                        + " revives in the same room with full health."
+                );
             }
         }
     }

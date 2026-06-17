@@ -14,7 +14,7 @@ package dndgame;
 public class Archer extends Hero {
 
     public Archer(String name) {
-        super(name, 100, 14, 6, 2);
+        super(name, 100, 14, 6, 2, 45);
         setEquippedWeapon(new Bow());
     }
 

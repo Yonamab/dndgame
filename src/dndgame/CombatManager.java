@@ -108,10 +108,11 @@ public class CombatManager {
     }
 
     public void monsterAttack(
-            Monster monster,
-            Hero hero,
-            boolean adaptiveAIEnabled,
-            boolean bossRageModeEnabled){
+         Monster monster,
+         Hero hero,
+         boolean adaptiveAIEnabled,
+         boolean bossRageModeEnabled,
+         boolean doubleDiceEnabled){
         
         if (!monster.isAlive()) {
             System.out.println(monster.getName() + " cannot attack because it is defeated.");
@@ -119,6 +120,7 @@ public class CombatManager {
         }
 
         EnemyAction action;
+        
 
         if (adaptiveAIEnabled) {
 
@@ -190,13 +192,18 @@ public class CombatManager {
                         + " extra damage.");
             }
 
-           if (d20 == 20) {
+            if (d20 == 20) {
 
                 damage *= 2;
 
                 System.out.println(
                         "Enemy critical hit! Damage doubled."
                 );
+            }
+           
+            if (doubleDiceEnabled) {
+                
+               damage *= 2;
             }
 
             hero.takeDamage(damage);
@@ -235,5 +242,10 @@ public class CombatManager {
 
     public int getLastDamageRoll() {
         return lastDamageRoll;
+    }
+    
+    public void recordDefendUse() {
+        
+        behaviorTracker.recordDefendUse();
     }
 }

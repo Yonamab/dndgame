@@ -17,7 +17,7 @@ public class Mage extends Hero {
     private int currentMana;
 
     public Mage(String name) {
-        super(name, 85, 12, 4, 3);
+        super(name, 85, 12, 4, 3, 35);
         setEquippedWeapon(new Staff());
         this.maxMana = 100;
         this.currentMana = 100;

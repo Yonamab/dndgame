@@ -76,4 +76,9 @@ public class Character {
     public int getMaxHealth() {
         return maxHealth;
     }
+    
+    public void refillHealth() {
+        
+       currentHealth = maxHealth;
+    }
 }

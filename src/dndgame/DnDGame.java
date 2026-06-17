@@ -47,6 +47,7 @@ public class DnDGame extends JFrame {
     private JButton shopButton;
     private JButton nextRoomButton;
     private JButton bossButton;
+    private JButton defendButton;
    
     private boolean specialAttackReady = true;
 
@@ -248,11 +249,12 @@ public class DnDGame extends JFrame {
     }
 
     private JPanel createButtonPanel() {
+        
         JPanel mainButtonPanel = new JPanel(new GridLayout(1, 3, 10, 10));
         mainButtonPanel.setBackground(new Color(15, 15, 25));
 
         JPanel combatPanel = createStyledPanel("Combat");
-        combatPanel.setLayout(new GridLayout(4, 1, 6, 6));
+        combatPanel.setLayout(new GridLayout(5, 1, 6, 6));
         
         JPanel shopPanel = createStyledPanel("Shop");
         shopPanel.setLayout(new GridLayout(3, 1, 6, 6));
@@ -264,10 +266,12 @@ public class DnDGame extends JFrame {
         specialAttackButton = new JButton("Special Attack");
         potionButton = new JButton("Inventory / Potions");
         bossButton = new JButton("Boss Fight");
-
         shopButton = new JButton("Shop");
-
         nextRoomButton = new JButton("Explore Next Room");
+        defendButton = new JButton("Defend");
+        
+        defendButton.addActionListener(e -> defend());
+        combatPanel.add(defendButton);
 
 
         attackButton.addActionListener(e -> attackMonster());
@@ -443,6 +447,12 @@ public class DnDGame extends JFrame {
         log("Boss Rage: " + game.getGameRules().isBossRageModeEnabled());
         log("Double Dice: " + game.getGameRules().isDoubleDiceEnabled());
         log("Permadeath: " + game.getGameRules().isPermadeathEnabled());
+        
+        if (game.getCurrentRoom().hasMonster()) {
+            log("First encounter: "
+                    + game.getCurrentRoom().getMonster().getName()
+                    + " appears.");
+        }
 
         updateGUI();
     }
@@ -467,6 +477,24 @@ public class DnDGame extends JFrame {
             if (!game.getLastGameMessage().isEmpty()) {
                 log(game.getLastGameMessage());
             }
+        }
+        
+        if (game.getLastGameMessage().contains("revives in the same room")) {
+            
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Permadeath is OFF.\n"
+                    + "Your hero revived with full health."
+            );
+        }
+        
+        if (game.getLastGameMessage().contains("revives in the same room")) {
+            
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Permadeath is OFF.\n"
+                    + "Your hero revived with full health."
+            );
         }
 
         updateGUI();
@@ -624,6 +652,15 @@ public class DnDGame extends JFrame {
         if (!game.getLastGameMessage().isEmpty()) {
            
             log(game.getLastGameMessage());
+        }
+        
+        if (game.getLastGameMessage().contains("revives in the same room")) {
+            
+            JOptionPane.showMessageDialog(   
+                    this,
+                    "Permadeath is OFF.\n"
+                    + "Your hero revived with full health."
+            );
         }
         
        
@@ -813,18 +850,6 @@ public class DnDGame extends JFrame {
             cardLayout.show(rootPanel, "START");
             return;
         }
-
-        if (!game.getHero().isAlive()) {
-
-            setGameButtonsEnabled(false);
-
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Defeat! Your hero has fallen."
-            );
-
-            cardLayout.show(rootPanel, "START");
-        }
     }
 
     private void log(String message) {
@@ -862,8 +887,44 @@ public class DnDGame extends JFrame {
         shopButton.setEnabled(enabled);
         nextRoomButton.setEnabled(enabled);
         bossButton.setEnabled(enabled);
+        defendButton.setEnabled(enabled);
        
         
+    }
+    
+    private void defend() {
+
+        game.heroDefend();
+        
+        String message = game.getLastGameMessage();
+
+        if (!game.getLastGameMessage().isEmpty()) {
+            log(game.getLastGameMessage());
+        }
+
+        if (!game.isGameWon()
+                && game.getHero().isAlive()
+                && game.getCurrentRoom().hasMonster()
+                && game.getCurrentRoom().getMonster().isAlive()) {
+
+            game.monsterAttack();
+
+            if (!game.getLastGameMessage().isEmpty()) {
+                log(game.getLastGameMessage());
+            }
+        }
+        
+        if (game.getLastGameMessage().contains("revives in the same room")) {
+            
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Permadeath is OFF.\n"
+                    + "Your hero revived with full health."
+            );
+        }
+
+        updateGUI();
+        checkGameEnd();
     }
     
     private JPanel createBackgroundPanel(String imagePath) {

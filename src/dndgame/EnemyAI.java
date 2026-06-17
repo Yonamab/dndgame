@@ -74,6 +74,12 @@ public class EnemyAI {
 
                     defendWeight += 20;
                 }
+                
+                if (tracker.defendsOften()) {
+                    specialWeight += 20;
+                    attackWeight += 10;
+                }
+                
                 break;
 
             case SIMPLE:

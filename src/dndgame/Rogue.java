@@ -14,7 +14,7 @@ package dndgame;
 public class Rogue extends Hero {
 
     public Rogue(String name) {
-        super(name, 90, 13, 7, 3);
+        super(name, 90, 13, 7, 3, 45);
         setEquippedWeapon(new Dagger());
     }
 

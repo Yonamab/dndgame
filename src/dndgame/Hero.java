@@ -17,18 +17,24 @@ public class Hero extends Character {
 
     private int level;
     private int experience;
-    private Weapon equippedWeapon;
-    private int gold;
-    private Inventory inventory;
     private int armorBonus;
+    private int gold;
+    private int defenseReductionPercent;
+    
+    private Inventory inventory;
+    private Weapon equippedWeapon;
+ 
+    private boolean defending;
     private ArrayList<StatusEffect> statusEffects;
 
-    public Hero(String name, int maxHealth, int armorClass, int attackBonus, int damageBonus) {
+    public Hero(String name, int maxHealth, int armorClass, int attackBonus, int damageBonus,int defenseReductionPercent) {
         super(name, maxHealth, armorClass, attackBonus, damageBonus);
         this.level = 1;
         this.experience = 0;
         this.gold = 25;
         this.armorBonus = 0;
+        this.defenseReductionPercent = defenseReductionPercent;
+        this.defending = false;
         this.statusEffects = new ArrayList<>();
         this.inventory = new Inventory();
     }
@@ -178,6 +184,28 @@ public class Hero extends Character {
     public String getSpecialAttackName() {
     
         return "Strike of Doom";
+    }
+    
+    public void defend() {
+        defending = true;
+    }
+
+    public boolean isDefending() {
+        return defending;
+    }
+
+    public int getDefenseReductionPercent() {
+        return defenseReductionPercent;
+    }
+    
+    @Override
+    public void takeDamage(int damage) {
+        if (defending) {
+            damage = damage - (damage * getDefenseReductionPercent() / 100);
+            defending = false;
+        }
+
+        super.takeDamage(damage);
     }
 
 }
