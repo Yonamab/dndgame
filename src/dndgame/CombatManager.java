@@ -26,6 +26,7 @@ public class CombatManager {
     }
 
     public void heroAttack(Hero hero, Monster monster,boolean doubleDiceEnabled) {
+        
         behaviorTracker.recordAttack();
         
         int d20 = dice.roll(20);
@@ -60,8 +61,6 @@ public class CombatManager {
         if (!monster.isAlive()) {
             return;
         }
-
-        Dice dice = new Dice();
 
         int d20 = dice.roll(20);
         lastD20Roll = d20;

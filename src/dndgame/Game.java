@@ -17,11 +17,14 @@ public class Game {
     private Room currentRoom;
     private CombatManager combatManager;
     private Shop shop;
+    private GameRules gameRules;
+    private Dice dice;
+    
     private int roomNumber;
     private boolean bossUnlocked;
     private boolean gameWon;
     private boolean gameOver;
-    private GameRules gameRules;
+    
 
     private String lastGameMessage;
 
@@ -36,6 +39,7 @@ public class Game {
         this.gameOver = false;
         this.gameRules = new GameRules();
         this.lastGameMessage = "";
+        this.dice = new Dice();
     }
 
     public Hero getHero() {
@@ -301,6 +305,11 @@ public class Game {
         String beforeEffects = hero.getActiveEffectsText();
         int beforeHP = hero.getCurrentHealth();
 
+        int beforeMana = -1;
+        if (hero instanceof Mage) {
+            beforeMana = ((Mage) hero).getCurrentMana();
+        }
+
         addMessage(hero.getName() + " used " + potion.getName() + ".");
 
         potion.use(hero);
@@ -308,13 +317,25 @@ public class Game {
         String afterEffects = hero.getActiveEffectsText();
         int afterHP = hero.getCurrentHealth();
 
-        if (beforeEffects.equals(afterEffects) && beforeHP == afterHP) {
+        int afterMana = -1;
+        if (hero instanceof Mage) {
+            afterMana = ((Mage) hero).getCurrentMana();
+        }
+
+        if (beforeEffects.equals(afterEffects)
+                && beforeHP == afterHP
+                && beforeMana == afterMana) {
+
             addMessage(potion.getName() + " had no effect and was not consumed.");
             return;
         }
 
         if (beforeHP != afterHP) {
             addMessage("HP changed: " + beforeHP + " -> " + afterHP + ".");
+        }
+
+        if (beforeMana != afterMana) {
+            addMessage("Mana changed: " + beforeMana + " -> " + afterMana + ".");
         }
 
         if (!beforeEffects.equals(afterEffects)) {
@@ -326,7 +347,6 @@ public class Game {
     }
 
     private void handleTrap() {
-        Dice dice = new Dice();
 
         int trapRoll = dice.roll(20);
         int trapDifficulty = 10 + roomNumber / 3;

@@ -269,22 +269,19 @@ public class DnDGame extends JFrame {
         shopButton = new JButton("Shop");
         nextRoomButton = new JButton("Explore Next Room");
         defendButton = new JButton("Defend");
-        
+      
         defendButton.addActionListener(e -> defend());
-        combatPanel.add(defendButton);
-
-
         attackButton.addActionListener(e -> attackMonster());
         specialAttackButton.addActionListener(e -> specialAttack());
         potionButton.addActionListener(e -> usePotion());
         bossButton.addActionListener(e -> startBossFight());
 
         shopButton.addActionListener(e -> buyPotion());
- 
         nextRoomButton.addActionListener(e -> nextRoom());
    
 
         combatPanel.add(attackButton);
+        combatPanel.add(defendButton);
         combatPanel.add(specialAttackButton);
         combatPanel.add(potionButton);
         combatPanel.add(bossButton);
@@ -457,12 +454,14 @@ public class DnDGame extends JFrame {
         updateGUI();
     }
 
-   private void attackMonster() {
+    private void attackMonster() {
 
         game.heroAttack();
 
-        if (!game.getLastGameMessage().isEmpty()) {
-            log(game.getLastGameMessage());
+        String message = game.getLastGameMessage();
+
+        if (!message.isEmpty()) {
+            log(message);
         }
 
         specialAttackReady = true;
@@ -474,45 +473,39 @@ public class DnDGame extends JFrame {
 
             game.monsterAttack();
 
-            if (!game.getLastGameMessage().isEmpty()) {
-                log(game.getLastGameMessage());
+            message = game.getLastGameMessage();
+
+            if (!message.isEmpty()) {
+                log(message);
             }
-        }
-        
-        if (game.getLastGameMessage().contains("revives in the same room")) {
-            
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Permadeath is OFF.\n"
-                    + "Your hero revived with full health."
-            );
-        }
-        
-        if (game.getLastGameMessage().contains("revives in the same room")) {
-            
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Permadeath is OFF.\n"
-                    + "Your hero revived with full health."
-            );
         }
 
         updateGUI();
+
+        if (message.contains("revives in the same room")) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Permadeath is OFF.\n"
+                    + "Your hero revived with full health."
+            );
+        }
+
         checkGameEnd();
     }
-    
+
     private void specialAttack() {
 
         if (!specialAttackReady) {
-            
             log("Special attack is cooling down.");
             return;
         }
 
         game.heroSpecialAttack();
 
-        if (!game.getLastGameMessage().isEmpty()) {
-            log(game.getLastGameMessage());
+        String message = game.getLastGameMessage();
+
+        if (!message.isEmpty()) {
+            log(message);
         }
 
         specialAttackReady = false;
@@ -524,12 +517,23 @@ public class DnDGame extends JFrame {
 
             game.monsterAttack();
 
-            if (!game.getLastGameMessage().isEmpty()) {
-                log(game.getLastGameMessage());
+            message = game.getLastGameMessage();
+
+            if (!message.isEmpty()) {
+                log(message);
             }
         }
 
         updateGUI();
+
+        if (message.contains("revives in the same room")) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Permadeath is OFF.\n"
+                    + "Your hero revived with full health."
+            );
+        }
+
         checkGameEnd();
     }
 
@@ -646,26 +650,26 @@ public class DnDGame extends JFrame {
     }
 
     private void nextRoom() {
-        
+
         game.goToNextRoom();
-        
-        if (!game.getLastGameMessage().isEmpty()) {
-           
-            log(game.getLastGameMessage());
+
+        String message = game.getLastGameMessage();
+
+        if (!message.isEmpty()) {
+            log(message);
         }
         
-        if (game.getLastGameMessage().contains("revives in the same room")) {
-            
-            JOptionPane.showMessageDialog(   
-                    this,
-                    "Permadeath is OFF.\n"
-                    + "Your hero revived with full health."
-            );
-        }
-        
-       
-        updateGUI();
-        
+         updateGUI();
+         
+        if (message.contains("revives in the same room")) {
+                JOptionPane.showMessageDialog(
+                      this,
+                      "Permadeath is OFF.\n"
+                      + "Your hero revived with full health."
+                );
+         }    
+      
+        checkGameEnd();
     }
 
     private void startBossFight() {
@@ -895,11 +899,11 @@ public class DnDGame extends JFrame {
     private void defend() {
 
         game.heroDefend();
-        
+
         String message = game.getLastGameMessage();
 
-        if (!game.getLastGameMessage().isEmpty()) {
-            log(game.getLastGameMessage());
+        if (!message.isEmpty()) {
+            log(message);
         }
 
         if (!game.isGameWon()
@@ -909,13 +913,16 @@ public class DnDGame extends JFrame {
 
             game.monsterAttack();
 
-            if (!game.getLastGameMessage().isEmpty()) {
-                log(game.getLastGameMessage());
+            message = game.getLastGameMessage();
+
+            if (!message.isEmpty()) {
+                log(message);
             }
         }
-        
-        if (game.getLastGameMessage().contains("revives in the same room")) {
-            
+
+        updateGUI();
+
+        if (message.contains("revives in the same room")) {
             JOptionPane.showMessageDialog(
                     this,
                     "Permadeath is OFF.\n"
@@ -923,7 +930,6 @@ public class DnDGame extends JFrame {
             );
         }
 
-        updateGUI();
         checkGameEnd();
     }
     

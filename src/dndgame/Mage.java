@@ -17,10 +17,10 @@ public class Mage extends Hero {
     private int currentMana;
 
     public Mage(String name) {
-        super(name, 85, 12, 4, 3, 35);
+        super(name, 95, 12, 4, 3, 35);
         setEquippedWeapon(new Staff());
-        this.maxMana = 100;
-        this.currentMana = 100;
+        this.maxMana = 120;
+        this.currentMana = 120;
     }
 
     @Override
@@ -32,7 +32,7 @@ public class Mage extends Hero {
     @Override
     public int specialAttack(Dice dice) {
 
-        if (!useMana(25)) {
+        if (!useMana(30)) {
 
             System.out.println(
                     getName()
@@ -44,7 +44,7 @@ public class Mage extends Hero {
 
         int damage =
                 attack(dice)
-                + 12
+                + 18
                 + getTemporaryDamageBonus();
 
         System.out.println(
