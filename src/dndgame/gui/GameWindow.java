@@ -8,7 +8,7 @@
  * Description:
  * This class creates the graphical user interface for the game.
  */
-package dndgame.app;
+package dndgame.gui;
 
 import dndgame.core.Game;
 import dndgame.core.GameRules;
@@ -26,9 +26,10 @@ import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
 
-public class DnDGame extends JFrame {
+public class GameWindow extends JFrame {
 
     private Game game;
+    private GameLogger logger;
 
     private CardLayout cardLayout;
     private JPanel rootPanel;
@@ -63,7 +64,7 @@ public class DnDGame extends JFrame {
    
     private boolean specialAttackReady = true;
 
-    public DnDGame() {
+    public GameWindow() {
         setTitle("Roll of Fate");
         setSize(1000, 650);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -82,7 +83,7 @@ public class DnDGame extends JFrame {
     }
 
     private JPanel createStartScreen() {
-        JPanel panel = createBackgroundPanel("/dndgame/images/Background1.png");
+       JPanel panel = new BackgroundPanel("/dndgame/images/Background1.png");
         panel.setLayout(new BorderLayout());
         panel.setBorder(new EmptyBorder(40, 40, 40, 40));
 
@@ -168,14 +169,14 @@ public class DnDGame extends JFrame {
 
     private JPanel createHeroPanel() {
         
-        JPanel outerPanel = createStyledPanel("Hero");
+        JPanel outerPanel = UIStyle.createStyledPanel("Hero");
         outerPanel.setLayout(new BorderLayout());
 
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setBackground(new Color(30, 30, 45));
 
-        heroLabel = createInfoLabel();
+        heroLabel = UIStyle.createInfoLabel();
 
         heroHealthBar = new JProgressBar();
         heroHealthBar.setMaximumSize(new Dimension(500, 22));
@@ -184,13 +185,13 @@ public class DnDGame extends JFrame {
         heroHealthBar.setAlignmentX(Component.CENTER_ALIGNMENT);
         heroHealthBar.setStringPainted(true);
 
-        weaponLabel = createInfoLabel();
-        roomLabel = createInfoLabel();
-        rulesLabel = createInfoLabel();
-        effectsLabel = createInfoLabel();
-        heroDiceLabel = createInfoLabel();
-        damageLabel = createInfoLabel();
-        cooldownLabel = createInfoLabel();
+        weaponLabel = UIStyle.createInfoLabel();
+        roomLabel = UIStyle.createInfoLabel();
+        rulesLabel = UIStyle.createInfoLabel();
+        effectsLabel = UIStyle.createInfoLabel();
+        heroDiceLabel = UIStyle.createInfoLabel();
+        damageLabel = UIStyle.createInfoLabel();
+        cooldownLabel = UIStyle.createInfoLabel();
 
         panel.add(heroLabel);
         panel.add(Box.createVerticalStrut(10));
@@ -219,18 +220,18 @@ public class DnDGame extends JFrame {
     }
 
     private JPanel createEnemyPanel() {
-        JPanel panel = createStyledPanel("Enemy");
+        JPanel panel = UIStyle.createStyledPanel("Enemy");
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
-        monsterLabel = createInfoLabel();
+        monsterLabel = UIStyle.createInfoLabel();
         monsterHealthBar = new JProgressBar();
-        monsterDiceLabel = createInfoLabel();
+        monsterDiceLabel = UIStyle.createInfoLabel();
         monsterHealthBar.setMaximumSize(new Dimension(550, 22));
         monsterHealthBar.setPreferredSize(new Dimension(550, 22));
         monsterHealthBar.setAlignmentX(Component.CENTER_ALIGNMENT);
         monsterHealthBar.setStringPainted(true);
-        monsterDiceLabel = createInfoLabel();
-        bossPhaseLabel = createInfoLabel();
+        monsterDiceLabel = UIStyle.createInfoLabel();
+        bossPhaseLabel = UIStyle.createInfoLabel();
 
         panel.add(monsterLabel);
         panel.add(Box.createVerticalStrut(10));
@@ -243,10 +244,12 @@ public class DnDGame extends JFrame {
     }
 
     private JPanel createLogPanel() {
-        JPanel panel = createStyledPanel("Game Log");
+        
+        JPanel panel = UIStyle.createStyledPanel("Game Log");
         panel.setLayout(new BorderLayout());
 
         logArea = new JTextArea();
+        logger = new GameLogger(logArea);
         logArea.setEditable(false);
         logArea.setLineWrap(true);
         logArea.setWrapStyleWord(true);
@@ -265,13 +268,13 @@ public class DnDGame extends JFrame {
         JPanel mainButtonPanel = new JPanel(new GridLayout(1, 3, 10, 10));
         mainButtonPanel.setBackground(new Color(15, 15, 25));
 
-        JPanel combatPanel = createStyledPanel("Combat");
+        JPanel combatPanel = UIStyle.createStyledPanel("Combat");
         combatPanel.setLayout(new GridLayout(5, 1, 6, 6));
         
-        JPanel shopPanel = createStyledPanel("Shop");
+        JPanel shopPanel = UIStyle.createStyledPanel("Shop");
         shopPanel.setLayout(new GridLayout(3, 1, 6, 6));
 
-        JPanel worldPanel = createStyledPanel("Explore / Rules");
+        JPanel worldPanel = UIStyle.createStyledPanel("Explore / Rules");
         worldPanel.setLayout(new GridLayout(2, 1, 6, 6));
 
         attackButton = new JButton("Attack");
@@ -311,33 +314,6 @@ public class DnDGame extends JFrame {
         return mainButtonPanel;
     }
 
-    private JPanel createStyledPanel(String title) {
-        JPanel panel = new JPanel();
-        panel.setBackground(new Color(30, 30, 45));
-        panel.setBorder(new CompoundBorder(
-                new TitledBorder(
-                        new LineBorder(new Color(180, 140, 60), 2),
-                        title,
-                        TitledBorder.CENTER,
-                        TitledBorder.TOP,
-                        new Font("Serif", Font.BOLD, 18),
-                        new Color(240, 200, 100)
-                ),
-                new EmptyBorder(12, 12, 12, 12)
-        ));
-        return panel;
-    }
-
-    private JLabel createInfoLabel() {
-        JLabel label = new JLabel();
-        label.setOpaque(true);
-        label.setBackground(new Color(45, 45, 65));
-        label.setForeground(Color.WHITE);
-        label.setFont(new Font("SansSerif", Font.BOLD, 14));
-        label.setBorder(new EmptyBorder(8, 8, 8, 8));
-        return label;
-    }
-
     private void startGame() {
 
         String heroName = nameField.getText().trim();
@@ -374,74 +350,23 @@ public class DnDGame extends JFrame {
                 break;
         }
 
-        JCheckBox adaptiveAICheck =
-                new JCheckBox("Adaptive AI", true);
-
-        JCheckBox trapsCheck =
-                new JCheckBox("Traps Enabled", true);
-
-        JCheckBox bossRageCheck =
-                new JCheckBox("Boss Rage Mode", false);
-
-        JCheckBox doubleDiceCheck =
-                new JCheckBox("Double Dice Damage", false);
-
-        JCheckBox permadeathCheck =
-                new JCheckBox("Permadeath", false);
-
-        JPanel rulesPanel = new JPanel();
-
-        rulesPanel.setLayout(
-                new BoxLayout(
-                        rulesPanel,
-                        BoxLayout.Y_AXIS
-                )
-        );
-
-        rulesPanel.add(adaptiveAICheck);
-        rulesPanel.add(trapsCheck);
-        rulesPanel.add(bossRageCheck);
-        rulesPanel.add(doubleDiceCheck);
-        rulesPanel.add(permadeathCheck);
-
-        JOptionPane.showMessageDialog(
-                this,
-                rulesPanel,
-                "Custom Rules",
-                JOptionPane.PLAIN_MESSAGE
-        );
 
         game = new Game(hero);
+        
+        RuleSelectionDialog.show(
+                this,
+                game.getGameRules()
+        );
+        
         setGameButtonsEnabled(true);
+        
         specialAttackReady = true;
-
-        GameRules rules = game.getGameRules();
-
-        rules.setAdaptiveAIEnabled(
-                adaptiveAICheck.isSelected()
-        );
-
-        rules.setTrapsEnabled(
-                trapsCheck.isSelected()
-        );
-
-        rules.setBossRageModeEnabled(
-                bossRageCheck.isSelected()
-        );
-
-        rules.setDoubleDiceEnabled(
-                doubleDiceCheck.isSelected()
-        );
-
-        rules.setPermadeathEnabled(
-                permadeathCheck.isSelected()
-        );
 
         cardLayout.show(rootPanel, "GAME");
 
-        logArea.setText("");
+        logger.clear();
 
-        log(
+        logger.log(
                 "Welcome, "
                 + hero.getName()
                 + " the "
@@ -449,16 +374,16 @@ public class DnDGame extends JFrame {
                 + "."
         );
 
-        log("Your adventure begins.");
-        log("Custom rules selected:");
-        log("Adaptive AI: " + game.getGameRules().isAdaptiveAIEnabled());
-        log("Traps: " + game.getGameRules().isTrapsEnabled());
-        log("Boss Rage: " + game.getGameRules().isBossRageModeEnabled());
-        log("Double Dice: " + game.getGameRules().isDoubleDiceEnabled());
-        log("Permadeath: " + game.getGameRules().isPermadeathEnabled());
+        logger.log("Your adventure begins.");
+        logger.log("Custom rules selected:");
+        logger.log("Adaptive AI: " + game.getGameRules().isAdaptiveAIEnabled());
+        logger.log("Traps: " + game.getGameRules().isTrapsEnabled());
+        logger.log("Boss Rage: " + game.getGameRules().isBossRageModeEnabled());
+        logger.log("Double Dice: " + game.getGameRules().isDoubleDiceEnabled());
+        logger.log("Permadeath: " + game.getGameRules().isPermadeathEnabled());
         
         if (game.getCurrentRoom().hasMonster()) {
-            log("First encounter: "
+            logger.log("First encounter: "
                     + game.getCurrentRoom().getMonster().getName()
                     + " appears.");
         }
@@ -473,7 +398,7 @@ public class DnDGame extends JFrame {
         String message = game.getLastGameMessage();
 
         if (!message.isEmpty()) {
-            log(message);
+            logger.log(message);
         }
 
         specialAttackReady = true;
@@ -488,7 +413,7 @@ public class DnDGame extends JFrame {
             message = game.getLastGameMessage();
 
             if (!message.isEmpty()) {
-                log(message);
+                logger.log(message);
             }
         }
 
@@ -508,7 +433,7 @@ public class DnDGame extends JFrame {
     private void specialAttack() {
 
         if (!specialAttackReady) {
-            log("Special attack is cooling down.");
+            logger.log("Special attack is cooling down.");
             return;
         }
 
@@ -517,7 +442,7 @@ public class DnDGame extends JFrame {
         String message = game.getLastGameMessage();
 
         if (!message.isEmpty()) {
-            log(message);
+            logger.log(message);
         }
 
         specialAttackReady = false;
@@ -532,7 +457,7 @@ public class DnDGame extends JFrame {
             message = game.getLastGameMessage();
 
             if (!message.isEmpty()) {
-                log(message);
+                logger.log(message);
             }
         }
 
@@ -555,7 +480,7 @@ public class DnDGame extends JFrame {
                 game.getHero().getInventory().getPotionNames();
 
         if (potionNames.length == 0) {
-            log("No potions available.");
+            logger.log("No potions available.");
             return;
         }
 
@@ -571,7 +496,7 @@ public class DnDGame extends JFrame {
         );
 
         if (choice < 0) {
-            log("Potion use cancelled.");
+            logger.log("Potion use cancelled.");
             return;
         }
 
@@ -581,81 +506,54 @@ public class DnDGame extends JFrame {
         game.usePotion(selectedPotion);
 
         if (!game.getLastGameMessage().isEmpty()) {
-            log(game.getLastGameMessage());
+            logger.log(game.getLastGameMessage());
         }
 
         updateGUI();
     }
 
     private void buyPotion() {
-        String[] options = {
-                "Healing Potion - " + Shop.HEALING_POTION_COST + " gold",
-                "Mana Potion - " + Shop.MANA_POTION_COST + " gold",
-                "Focus Potion - " + Shop.FOCUS_POTION_COST + " gold",
-                "Shadow Potion - " + Shop.SHADOW_POTION_COST + " gold",
-                "Defense Potion - " + Shop.DEFENSE_POTION_COST + " gold",
-                "Weapon Upgrade - " + Shop.WEAPON_UPGRADE_COST + " gold",
-                "Armor Upgrade - " + Shop.ARMOR_UPGRADE_COST + " gold",
-                "Cancel"
-        };
-
-        JComboBox<String> shopBox = new JComboBox<>(options);
-
-        int result = JOptionPane.showConfirmDialog(
+        int choice = ShopDialog.show(
                 this,
-                shopBox,
-                "Gold: " + game.getHero().getGold() + " | Dungeon Shop",
-                JOptionPane.OK_CANCEL_OPTION,
-                JOptionPane.PLAIN_MESSAGE
+                game.getHero()
         );
-
-        int choice;
-
-        if (result == JOptionPane.OK_OPTION) {
-            
-            choice = shopBox.getSelectedIndex();
-        } 
-        
-        else {
-            choice = 7;
-        }
 
         try {
             switch (choice) {
                 case 0:
                     game.getShop().buyHealingPotion(game.getHero());
-                    log("Bought Healing Potion.");
+                    logger.log("Bought Healing Potion.");
                     break;
                 case 1:
                     game.getShop().buyManaPotion(game.getHero());
-                    log("Bought Mana Potion.");
+                    logger.log("Bought Mana Potion.");
                     break;
                 case 2:
                     game.getShop().buyFocusPotion(game.getHero());
-                    log("Bought Focus Potion.");
+                    logger.log("Bought Focus Potion.");
                     break;
                 case 3:
                     game.getShop().buyShadowPotion(game.getHero());
-                    log("Bought Shadow Potion.");
+                    logger.log("Bought Shadow Potion.");
                     break;
                 case 4:
                     game.getShop().buyDefensePotion(game.getHero());
-                    log("Bought Defense Potion.");
+                    logger.log("Bought Defense Potion.");
                     break;
                 case 5:
                     game.getShop().upgradeWeapon(game.getHero());
-                    log("Weapon upgraded.");
+                    logger.log("Weapon upgraded.");
                     break;
                 case 6:
                     game.getShop().upgradeArmor(game.getHero());
-                    log("Armor upgraded.");
+                    logger.log("Armor upgraded.");
                     break;
                 default:
-                    log("Shop closed.");
+                    logger.log("Shop closed.");
                     break;
             }
         } catch (IllegalStateException ex) {
-            log("Shop error: " + ex.getMessage());
+            logger.log("Shop error: " + ex.getMessage());
         }
 
         updateGUI();
@@ -668,7 +566,7 @@ public class DnDGame extends JFrame {
         String message = game.getLastGameMessage();
 
         if (!message.isEmpty()) {
-            log(message);
+            logger.log(message);
         }
         
          updateGUI();
@@ -690,7 +588,7 @@ public class DnDGame extends JFrame {
         
         if (!game.getLastGameMessage().isEmpty()) {
             
-            log(game.getLastGameMessage());
+            logger.log(game.getLastGameMessage());
         }
         
         updateGUI();
@@ -831,7 +729,8 @@ public class DnDGame extends JFrame {
                     "Special Attack: READY"
             );
 
-        } else {
+        } 
+        else {
 
             cooldownLabel.setText(
                     "Special Attack: CHARGING"
@@ -870,17 +769,12 @@ public class DnDGame extends JFrame {
         }
     }
 
-    private void log(String message) {
-        logArea.append(message + "\n");
-        logArea.setCaretPosition(logArea.getDocument().getLength());
-    }
-    
     private void upgradeWeapon() {
         try {
             game.getShop().upgradeWeapon(game.getHero());
-            log("Weapon upgraded.");
+            logger.log("Weapon upgraded.");
         } catch (IllegalStateException ex) {
-            log("Shop error: " + ex.getMessage());
+            logger.log("Shop error: " + ex.getMessage());
         }
 
         updateGUI();
@@ -889,9 +783,9 @@ public class DnDGame extends JFrame {
     private void upgradeArmor() {
         try {
             game.getShop().upgradeArmor(game.getHero());
-            log("Armor upgraded.");
+            logger.log("Armor upgraded.");
         } catch (IllegalStateException ex) {
-            log("Shop error: " + ex.getMessage());
+           logger. log("Shop error: " + ex.getMessage());
         }
 
         updateGUI();
@@ -917,7 +811,7 @@ public class DnDGame extends JFrame {
         String message = game.getLastGameMessage();
 
         if (!message.isEmpty()) {
-            log(message);
+            logger.log(message);
         }
 
         if (!game.isGameWon()
@@ -930,7 +824,7 @@ public class DnDGame extends JFrame {
             message = game.getLastGameMessage();
 
             if (!message.isEmpty()) {
-                log(message);
+                logger.log(message);
             }
         }
 
@@ -945,30 +839,5 @@ public class DnDGame extends JFrame {
         }
 
         checkGameEnd();
-    }
-    
-    private JPanel createBackgroundPanel(String imagePath) {
-        return new JPanel() {
-            private Image backgroundImage =
-                    new ImageIcon(getClass().getResource(imagePath)).getImage();
-
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-
-                g.drawImage(
-                        backgroundImage,
-                        0,
-                        0,
-                        getWidth(),
-                        getHeight(),
-                        this
-                );
-            }
-        };
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new DnDGame());
     }
 }
