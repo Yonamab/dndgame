@@ -811,6 +811,8 @@ public class DnDGame extends JFrame {
                 && specialAttackReady
         );
         
+        defendButton.setEnabled(monsterAlive);
+        
         if (specialAttackReady) {
 
             cooldownLabel.setText(
