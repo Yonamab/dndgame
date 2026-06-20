@@ -31,9 +31,10 @@ public class GameRules {
         return adaptiveAIEnabled;
     }
 
-    public void setAdaptiveAIEnabled(
-            boolean adaptiveAIEnabled
-    ) {
+    public void setAdaptiveAIEnabled (boolean adaptiveAIEnabled) 
+            
+    {
+        
         this.adaptiveAIEnabled = adaptiveAIEnabled;
     }
 
@@ -60,9 +61,8 @@ public class GameRules {
         return doubleDiceEnabled;
     }
 
-    public void setDoubleDiceEnabled(
-            boolean doubleDiceEnabled
-    ) {
+    public void setDoubleDiceEnabled( boolean doubleDiceEnabled )            
+    {
         this.doubleDiceEnabled =
                 doubleDiceEnabled;
     }
@@ -71,9 +71,8 @@ public class GameRules {
         return permadeathEnabled;
     }
 
-    public void setPermadeathEnabled(
-            boolean permadeathEnabled
-    ) {
+    public void setPermadeathEnabled(boolean permadeathEnabled) 
+    { 
         this.permadeathEnabled =
                 permadeathEnabled;
     }

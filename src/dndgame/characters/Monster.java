@@ -31,6 +31,7 @@ public class Monster extends Character {
     super(name, maxHealth, armorClass, attackBonus, damageBonus);
     this.damageDie = damageDie;
     this.personality = personality;
+    this.monsterType = monsterType;
     
     }
 

@@ -17,9 +17,9 @@ import javax.swing.*;
 public class ShopDialog {
 
     public static int show(
-            JFrame parent,
-            Hero hero
-    ) {
+              JFrame parent,
+              Hero hero) 
+    {
 
         String[] options = {
                 "Healing Potion - " + Shop.HEALING_POTION_COST + " gold",
@@ -35,8 +35,7 @@ public class ShopDialog {
         JComboBox<String> shopBox =
                 new JComboBox<>(options);
 
-        int result =
-                JOptionPane.showConfirmDialog(
+        int result = JOptionPane.showConfirmDialog(
                         parent,
                         shopBox,
                         "Gold: "
@@ -44,7 +43,7 @@ public class ShopDialog {
                         + " | Dungeon Shop",
                         JOptionPane.OK_CANCEL_OPTION,
                         JOptionPane.PLAIN_MESSAGE
-                );
+                    );
 
         if (result == JOptionPane.OK_OPTION) {
             return shopBox.getSelectedIndex();

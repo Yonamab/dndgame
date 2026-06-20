@@ -83,63 +83,55 @@ public class GameWindow extends JFrame {
     }
 
     private JPanel createStartScreen() {
-       JPanel panel = new BackgroundPanel("/dndgame/images/Background1.png");
-        panel.setLayout(new BorderLayout());
-        panel.setBorder(new EmptyBorder(40, 40, 40, 40));
 
-        
-       
-
-        JPanel formWrapper = new JPanel(new GridBagLayout());
-    formWrapper.setOpaque(false);
-
+    JPanel panel = new BackgroundPanel("/dndgame/images/Background1.png");
+    panel.setLayout(new GridBagLayout()); 
+    panel.setBorder(new EmptyBorder(40, 40, 40, 40));
+    
     JPanel formPanel = new JPanel();
     formPanel.setLayout(new BoxLayout(formPanel, BoxLayout.Y_AXIS));
     formPanel.setOpaque(false);
-        formPanel.setMaximumSize(new Dimension(420, 260));
+    formPanel.setMaximumSize(new Dimension(420, 260));
 
-        JLabel nameLabel = new JLabel("Enter Hero Name:");
-        nameLabel.setForeground(Color.WHITE);
-        nameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+    JLabel nameLabel = new JLabel("Enter Hero Name:");
+    nameLabel.setForeground(Color.WHITE);
+    nameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        nameField = new JTextField("John Snow");
-        nameField.setMaximumSize(new Dimension(420, 35));
-        nameField.setAlignmentX(Component.CENTER_ALIGNMENT);
+    nameField = new JTextField("John Snow");
+    nameField.setMaximumSize(new Dimension(420, 35));
+    nameField.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JLabel classLabel = new JLabel("Choose Hero Class:");
-        classLabel.setForeground(Color.WHITE);
-        classLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+    JLabel classLabel = new JLabel("Choose Hero Class:");
+    classLabel.setForeground(Color.WHITE);
+    classLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        classBox = new JComboBox<>(new String[]{
-                "Warrior",
-                "Mage",
-                "Archer",
-                "Rogue"
-        });
-        classBox.setMaximumSize(new Dimension(420, 35));
-        classBox.setAlignmentX(Component.CENTER_ALIGNMENT);
+    classBox = new JComboBox<>(new String[]{
+            "Warrior",
+            "Mage",
+            "Archer",
+            "Rogue"
+    });
+    classBox.setMaximumSize(new Dimension(420, 35));
+    classBox.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JButton startButton = new JButton("Begin Your Fate");
-        startButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        startButton.addActionListener(e -> startGame());
+    JButton startButton = new JButton("Begin Your Fate");
+    startButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+    startButton.addActionListener(e -> startGame());
 
-        formPanel.add(nameLabel);
-        formPanel.add(Box.createVerticalStrut(8));
-        formPanel.add(nameField);
-        formPanel.add(Box.createVerticalStrut(18));
-        formPanel.add(classLabel);
-        formPanel.add(Box.createVerticalStrut(8));
-        formPanel.add(classBox);
-        formPanel.add(Box.createVerticalStrut(25));
-        formPanel.add(startButton);
+    formPanel.add(nameLabel);
+    formPanel.add(Box.createVerticalStrut(8));
+    formPanel.add(nameField);
+    formPanel.add(Box.createVerticalStrut(18));
+    formPanel.add(classLabel);
+    formPanel.add(Box.createVerticalStrut(8));
+    formPanel.add(classBox);
+    formPanel.add(Box.createVerticalStrut(25));
+    formPanel.add(startButton);
 
-        formWrapper.add(formPanel);
+    panel.add(formPanel); 
 
-        
-        panel.add(formWrapper, BorderLayout.CENTER);
-
-        return panel;
-    }
+    return panel;
+}
 
     private JPanel createGameScreen() {
         
@@ -173,15 +165,16 @@ public class GameWindow extends JFrame {
         outerPanel.setLayout(new BorderLayout());
 
         JPanel panel = new JPanel();
+        panel.setPreferredSize(new Dimension(300, 700));
+        panel.setMaximumSize(new Dimension(300, 700));
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setBackground(new Color(30, 30, 45));
 
         heroLabel = UIStyle.createInfoLabel();
 
         heroHealthBar = new JProgressBar();
-        heroHealthBar.setMaximumSize(new Dimension(500, 22));
-        heroHealthBar.setPreferredSize(new Dimension(500, 22));
-        heroHealthBar.setAlignmentX(Component.CENTER_ALIGNMENT);
+        heroHealthBar.setMaximumSize(new Dimension(511, 22));
+        heroHealthBar.setPreferredSize(new Dimension(511, 22));
         heroHealthBar.setAlignmentX(Component.CENTER_ALIGNMENT);
         heroHealthBar.setStringPainted(true);
 
@@ -212,7 +205,8 @@ public class GameWindow extends JFrame {
         panel.add(damageLabel);
 
         JScrollPane scrollPane = new JScrollPane(panel);
-        scrollPane.setBorder(null);
+        
+        scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
         outerPanel.add(scrollPane, BorderLayout.CENTER);
 
@@ -220,24 +214,26 @@ public class GameWindow extends JFrame {
     }
 
     private JPanel createEnemyPanel() {
+        
         JPanel panel = UIStyle.createStyledPanel("Enemy");
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
         monsterLabel = UIStyle.createInfoLabel();
-        monsterHealthBar = new JProgressBar();
         monsterDiceLabel = UIStyle.createInfoLabel();
+        bossPhaseLabel = UIStyle.createInfoLabel();
+        
+        monsterHealthBar = new JProgressBar();
         monsterHealthBar.setMaximumSize(new Dimension(550, 22));
         monsterHealthBar.setPreferredSize(new Dimension(550, 22));
         monsterHealthBar.setAlignmentX(Component.CENTER_ALIGNMENT);
         monsterHealthBar.setStringPainted(true);
-        monsterDiceLabel = UIStyle.createInfoLabel();
-        bossPhaseLabel = UIStyle.createInfoLabel();
 
         panel.add(monsterLabel);
-        panel.add(Box.createVerticalStrut(10));
+        panel.add(Box.createVerticalStrut(5));
         panel.add(monsterHealthBar);
-        panel.add(Box.createVerticalStrut(10));
+        panel.add(Box.createVerticalStrut(5));
         panel.add(monsterDiceLabel);
+        panel.add(Box.createVerticalStrut(5));
         panel.add(bossPhaseLabel);
 
         return panel;
@@ -275,7 +271,7 @@ public class GameWindow extends JFrame {
         shopPanel.setLayout(new GridLayout(3, 1, 6, 6));
 
         JPanel worldPanel = UIStyle.createStyledPanel("Explore / Rules");
-        worldPanel.setLayout(new GridLayout(2, 1, 6, 6));
+        worldPanel.setLayout(new GridLayout(3, 1, 6, 6));
 
         attackButton = new JButton("Attack");
         specialAttackButton = new JButton("Special Attack");
@@ -319,6 +315,7 @@ public class GameWindow extends JFrame {
         String heroName = nameField.getText().trim();
 
         if (heroName.isEmpty()) {
+            
             JOptionPane.showMessageDialog(
                     this,
                     "Please enter a hero name."
@@ -326,8 +323,7 @@ public class GameWindow extends JFrame {
             return;
         }
 
-        String selectedClass =
-                (String) classBox.getSelectedItem();
+        String selectedClass = (String) classBox.getSelectedItem();
 
         Hero hero;
 
@@ -381,12 +377,9 @@ public class GameWindow extends JFrame {
         logger.log("Boss Rage: " + game.getGameRules().isBossRageModeEnabled());
         logger.log("Double Dice: " + game.getGameRules().isDoubleDiceEnabled());
         logger.log("Permadeath: " + game.getGameRules().isPermadeathEnabled());
-        
-        if (game.getCurrentRoom().hasMonster()) {
-            logger.log("First encounter: "
-                    + game.getCurrentRoom().getMonster().getName()
-                    + " appears.");
-        }
+        logger.log("First encounter: "
+                   + game.getCurrentRoom().getMonster().getName()
+                   + " appears.");
 
         updateGUI();
     }
@@ -431,11 +424,6 @@ public class GameWindow extends JFrame {
     }
 
     private void specialAttack() {
-
-        if (!specialAttackReady) {
-            logger.log("Special attack is cooling down.");
-            return;
-        }
 
         game.heroSpecialAttack();
 
@@ -595,7 +583,7 @@ public class GameWindow extends JFrame {
     }
 
     private void updateGUI() {
-        
+
         if (game == null) {
             return;
         }
@@ -603,28 +591,61 @@ public class GameWindow extends JFrame {
         Hero hero = game.getHero();
         Room room = game.getCurrentRoom();
         Monster monster = room.getMonster();
-        
-        if (monster.getMonsterType() == MonsterType.ANCIENT_SHADOW_DRAGON) {
+
+        boolean isBoss =
+                monster.getMonsterType()
+                == MonsterType.ANCIENT_SHADOW_DRAGON;
+
+        boolean bossRageRuleOn =
+                game.getGameRules().isBossRageModeEnabled();
+
+        if (isBoss) {
 
             int bossHPPercent =
                     monster.getCurrentHealth() * 100
                     / monster.getMaxHealth();
 
             if (bossHPPercent > 50) {
-                
-                bossPhaseLabel.setText("Boss Phase: Shadow Awakening");
+
+                bossPhaseLabel.setText(
+                        "<html>Boss Phase: Shadow Awakening"
+                        + "<br>Rage Mode: "
+                        + (bossRageRuleOn ? "Enabled" : "Disabled")
+                        + "</html>"
+                );
+
             } else {
-                bossPhaseLabel.setText("Boss Phase: Rage of Fate");
+
+                if (bossRageRuleOn) {
+
+                    bossPhaseLabel.setText(
+                            "<html>Boss Phase: Rage of Fate"
+                            + "<br>Rage Mode: Active"
+                            + "</html>"
+                    );
+
+                } else {
+
+                    bossPhaseLabel.setText(
+                            "<html>Boss Phase: Wounded"
+                            + "<br>Rage Mode: Disabled"
+                            + "</html>"
+                    );
+                }
             }
 
         } else {
-            
-            bossPhaseLabel.setText("Boss Phase: None");
+
+            bossPhaseLabel.setText(
+                    "<html>Boss Phase: None"
+                    + "<br>Rage Mode: Not applicable"
+                    + "</html>"
+            );
         }
 
         String heroInfo =
                 "<html>Hero: " + hero.getName()
-                +"<br>Class: " + hero.getClass().getSimpleName()
+                + "<br>Class: " + hero.getClass().getSimpleName()
                 + "<br>Gold: " + hero.getGold()
                 + "<br>Level: " + hero.getLevel()
                 + "<br>Armor: " + hero.getTotalArmorClass()
@@ -644,52 +665,63 @@ public class GameWindow extends JFrame {
         heroInfo += "</html>";
 
         heroLabel.setText(heroInfo);
-        
-        
 
         heroHealthBar.setMaximum(hero.getMaxHealth());
         heroHealthBar.setValue(hero.getCurrentHealth());
-        heroHealthBar.setString("HP: " + hero.getCurrentHealth() + " / " + hero.getMaxHealth());
-        
+        heroHealthBar.setString(
+                "HP: "
+                + hero.getCurrentHealth()
+                + " / "
+                + hero.getMaxHealth()
+        );
+
         weaponLabel.setText(
                 "Weapon: "
                 + hero.getEquippedWeapon().getName()
-                + " | Damage Bonus: +"
+                + "|Damga Bonus: +"
                 + hero.getEquippedWeapon().getDamageBonus()
         );
 
         roomLabel.setText(
                 "<html>Room: " + room.getRoomNumber()
-                        + "<br>Boss unlocked: " + game.isBossUnlocked()
-                        + "<br>Room cleared: " + room.isCleared()
-                        + "</html>"
+                + "<br>Boss unlocked: " + game.isBossUnlocked()
+                + "<br>Room cleared: " + room.isCleared()
+                + "</html>"
         );
-        
+
         rulesLabel.setText(
                 "<html>Rules:"
-                        + "<br>Adaptive AI: " + game.getGameRules().isAdaptiveAIEnabled()
-                        + "<br>Traps: " + game.getGameRules().isTrapsEnabled()
-                        + "<br>Boss Rage: " + game.getGameRules().isBossRageModeEnabled()
-                        + "<br>Double Dice: " + game.getGameRules().isDoubleDiceEnabled()
-                        + "<br>Permadeath: " + game.getGameRules().isPermadeathEnabled()
-                        + "</html>"
+                + "<br>Adaptive AI: "
+                + game.getGameRules().isAdaptiveAIEnabled()
+                + "<br>Traps: "
+                + game.getGameRules().isTrapsEnabled()
+                + "<br>Boss Rage: "
+                + game.getGameRules().isBossRageModeEnabled()
+                + "<br>Double Dice: "
+                + game.getGameRules().isDoubleDiceEnabled()
+                + "<br>Permadeath: "
+                + game.getGameRules().isPermadeathEnabled()
+                + "</html>"
         );
 
         monsterLabel.setText(
                 "<html>Monster: " + monster.getName()
-                        + "<br>Personality: " + monster.getPersonality()
-                        + "<br>Armor: " + monster.getArmorClass()
-                        + "<br>Attack Bonus: +" + monster.getAttackBonus()
-                        + "<br>Damage Die: D" + monster.getDamageDie()
-                        + "</html>"
+                + "<br>Personality: " + monster.getPersonality()
+                + "<br>Armor: " + monster.getArmorClass()
+                + "<br>Attack Bonus: +" + monster.getAttackBonus()
+                + "<br>Damage Die: D" + monster.getDamageDie()
+                + "</html>"
         );
         
-        
-
         monsterHealthBar.setMaximum(monster.getMaxHealth());
         monsterHealthBar.setValue(monster.getCurrentHealth());
-        monsterHealthBar.setString("HP: " + monster.getCurrentHealth() + " / " + monster.getMaxHealth());
-        
+        monsterHealthBar.setString(
+                "HP: "
+                + monster.getCurrentHealth()
+                + " / "
+                + monster.getMaxHealth()
+        );
+
         heroDiceLabel.setText(
                 "Last D20 Roll: "
                 + game.getCombatManager().getLastD20Roll()
@@ -704,39 +736,46 @@ public class GameWindow extends JFrame {
                 "Last Damage: "
                 + game.getCombatManager().getLastDamageRoll()
         );
-        
+
         effectsLabel.setText(
                 "<html>Effects: "
                 + hero.getActiveEffectsText()
                 + "</html>"
         );
+
+        boolean monsterAlive = room.getMonster().isAlive();
         
-        boolean monsterAlive =
-        room.getMonster().isAlive();
+        shopButton.setEnabled(!monsterAlive);
 
         attackButton.setEnabled(monsterAlive);
-        
-        specialAttackButton.setEnabled(
-                monsterAlive
-                && specialAttackReady
-        );
-        
+
+        boolean canUseSpecial = monsterAlive && specialAttackReady;
+
+        if (hero instanceof Mage) {
+
+            Mage mage = (Mage) hero;
+
+            canUseSpecial =
+                    canUseSpecial
+                    && mage.hasEnoughManaForSpecial();
+        }
+
+        specialAttackButton.setEnabled(canUseSpecial);
+
         defendButton.setEnabled(monsterAlive);
-        
+
         if (specialAttackReady) {
 
             cooldownLabel.setText(
                     "Special Attack: READY"
             );
 
-        } 
-        else {
+        } else {
 
             cooldownLabel.setText(
                     "Special Attack: CHARGING"
             );
         }
-        
     }
 
     private void checkGameEnd() {
@@ -768,29 +807,7 @@ public class GameWindow extends JFrame {
             return;
         }
     }
-
-    private void upgradeWeapon() {
-        try {
-            game.getShop().upgradeWeapon(game.getHero());
-            logger.log("Weapon upgraded.");
-        } catch (IllegalStateException ex) {
-            logger.log("Shop error: " + ex.getMessage());
-        }
-
-        updateGUI();
-    }
-    
-    private void upgradeArmor() {
-        try {
-            game.getShop().upgradeArmor(game.getHero());
-            logger.log("Armor upgraded.");
-        } catch (IllegalStateException ex) {
-           logger. log("Shop error: " + ex.getMessage());
-        }
-
-        updateGUI();
-    }
-    
+ 
     private void setGameButtonsEnabled(boolean enabled) {
 
         attackButton.setEnabled(enabled);
@@ -813,6 +830,10 @@ public class GameWindow extends JFrame {
         if (!message.isEmpty()) {
             logger.log(message);
         }
+
+        specialAttackReady = true;
+
+        logger.log("Defending helped you regain focus. Special Attack is ready.\n");
 
         if (!game.isGameWon()
                 && game.getHero().isAlive()

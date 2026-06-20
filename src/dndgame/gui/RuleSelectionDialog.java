@@ -15,25 +15,19 @@ import javax.swing.*;
 
 public class RuleSelectionDialog {
 
-    public static void show(
-            JFrame parent,
-            GameRules rules
-    ) {
+    public static void show( JFrame parent, GameRules rules) 
+    
+    {
 
-        JCheckBox adaptiveAICheck =
-                new JCheckBox("Adaptive AI", true);
+        JCheckBox adaptiveAICheck = new JCheckBox("Adaptive AI", true);
 
-        JCheckBox trapsCheck =
-                new JCheckBox("Traps Enabled", true);
+        JCheckBox trapsCheck = new JCheckBox("Traps Enabled", true);
 
-        JCheckBox bossRageCheck =
-                new JCheckBox("Boss Rage Mode", false);
+        JCheckBox bossRageCheck =  new JCheckBox("Boss Rage Mode", false);
 
-        JCheckBox doubleDiceCheck =
-                new JCheckBox("Double Dice Damage", false);
+        JCheckBox doubleDiceCheck = new JCheckBox("Double Dice Damage", false);
 
-        JCheckBox permadeathCheck =
-                new JCheckBox("Permadeath", false);
+        JCheckBox permadeathCheck =  new JCheckBox("Permadeath", false);
 
         JPanel rulesPanel = new JPanel();
 
@@ -57,13 +51,9 @@ public class RuleSelectionDialog {
                 JOptionPane.PLAIN_MESSAGE
         );
 
-        rules.setAdaptiveAIEnabled(
-                adaptiveAICheck.isSelected()
-        );
+        rules.setAdaptiveAIEnabled( adaptiveAICheck.isSelected() );
 
-        rules.setTrapsEnabled(
-                trapsCheck.isSelected()
-        );
+        rules.setTrapsEnabled( trapsCheck.isSelected() );
 
         rules.setBossRageModeEnabled(
                 bossRageCheck.isSelected()

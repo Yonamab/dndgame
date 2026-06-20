@@ -43,9 +43,9 @@ public class Mage extends Hero {
                     + " does not have enough mana."
             );
 
-            return attack(dice);
+            return 0;
         }
-
+        
         int damage =
                 attack(dice)
                 + 18
@@ -65,6 +65,10 @@ public class Mage extends Hero {
 
     public int getCurrentMana() {
         return currentMana;
+    }
+    
+    public boolean hasEnoughManaForSpecial() {
+        return currentMana >= 30;
     }
 
     public void restoreMana(int amount) {

@@ -17,7 +17,9 @@ public class GameLogger {
     private JTextArea logArea;
 
     public GameLogger(JTextArea logArea) {
+        
         this.logArea = logArea;
+        
     }
 
     public void log(String message) {
@@ -30,6 +32,8 @@ public class GameLogger {
     }
 
     public void clear() {
+        
         logArea.setText("");
+        
     }
 }

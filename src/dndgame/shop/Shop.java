@@ -10,13 +10,14 @@
  */
 package dndgame.shop;
 
-import dndgame.characters.Hero;
+import dndgame.characters.*;
 import dndgame.items.Weapon;
 import dndgame.items.DefensePotion;
 import dndgame.items.ShadowPotion;
 import dndgame.items.FocusPotion;
 import dndgame.items.ManaPotion;
 import dndgame.items.HealingPotion;
+
 
 public class Shop {
 
@@ -58,34 +59,42 @@ public class Shop {
     }
     
     public void buyManaPotion(Hero hero) {
+        
+       if (!(hero instanceof Mage)) {
+           throw new IllegalStateException("Only Mages can buy Mana Potions.");
+       }
 
-        hero.spendGold(MANA_POTION_COST);
-        hero.getInventory().addItem(new ManaPotion());
-
-        System.out.println(hero.getName() + " bought a mana potion.");
-    }
+       hero.spendGold(MANA_POTION_COST);
+       hero.getInventory().addItem(new ManaPotion());
+   }
 
     public void buyFocusPotion(Hero hero) {
+        
+        if (!(hero instanceof Archer)) {
+            throw new IllegalStateException("Only Archers can buy Focus Potions.");
+        }
 
         hero.spendGold(FOCUS_POTION_COST);
         hero.getInventory().addItem(new FocusPotion());
-
-        System.out.println(hero.getName() + " bought a focus potion.");
     }
 
     public void buyShadowPotion(Hero hero) {
+        
+        if (!(hero instanceof Rogue)) {
+            throw new IllegalStateException("Only Rogues can buy Shadow Potions.");
+        }
 
         hero.spendGold(SHADOW_POTION_COST);
         hero.getInventory().addItem(new ShadowPotion());
-
-        System.out.println(hero.getName() + " bought a shadow potion.");
     }
 
     public void buyDefensePotion(Hero hero) {
+        
+        if (!(hero instanceof Warrior)) {
+            throw new IllegalStateException("Only Warriors can buy Defense Potions.");
+        }
 
         hero.spendGold(DEFENSE_POTION_COST);
         hero.getInventory().addItem(new DefensePotion());
-
-        System.out.println(hero.getName() + " bought a defense potion.");
     }
 }

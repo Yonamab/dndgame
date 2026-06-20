@@ -78,8 +78,8 @@ public class EnemyAI {
                 }
                 
                 if (tracker.defendsOften()) {
-                    specialWeight += 20;
-                    attackWeight += 10;
+                    specialWeight += 35;
+                    attackWeight += 15;
                 }
                 
                 break;
@@ -114,8 +114,8 @@ public class EnemyAI {
         }
 
         if (tracker.usesPotionsOften()) {
-            attackWeight += 15;
-            specialWeight += 10;
+            attackWeight += 25;
+            specialWeight += 20;
         }
 
         attackWeight = Math.max(0, attackWeight);
@@ -130,12 +130,11 @@ public class EnemyAI {
         int intelligenceRoll =
                 random.nextInt(100) + 1;
 
-        if (intelligenceRoll > 70) {
+        if (intelligenceRoll > 85) {
             return randomAction(specialWeight > 0);
         }
 
-        int roll =
-                random.nextInt(totalWeight) + 1;
+        int roll = random.nextInt(totalWeight) + 1;
 
         if (roll <= attackWeight) {
             return EnemyAction.ATTACK;

@@ -257,7 +257,7 @@ public class Game {
         clearMessage();
 
         if (!currentRoom.isCleared()) {
-            addMessage("You must clear the current room first.");
+            addMessage("You must clear the current room first.\n");
             return;
         }
 
@@ -265,7 +265,7 @@ public class Game {
         currentRoom = createRoom(roomNumber);
 
         addMessage("You entered room " + roomNumber + ".");
-        addMessage(currentRoom.getDescription());
+        addMessage(currentRoom.getDescription()+"\n");
 
         if (gameRules.isTrapsEnabled()) {
             handleTrap();
@@ -277,7 +277,7 @@ public class Game {
         }
 
         if (currentRoom.hasMonster()) {
-            addMessage("A " + currentRoom.getMonster().getName() + " appears.");
+            addMessage("A " + currentRoom.getMonster().getName() + " appears.\n");
         }
     }
 
@@ -417,6 +417,15 @@ public class Game {
                         + hero.getName()
                         + " revives in the same room with full health."
                 );
+                
+                if (currentRoom.hasMonster()) {
+
+                    Monster monster = currentRoom.getMonster();
+
+                    monster.heal(
+                            monster.getMaxHealth()
+                    );
+                }
             }
         }
     }

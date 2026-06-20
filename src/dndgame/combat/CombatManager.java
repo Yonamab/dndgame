@@ -34,6 +34,8 @@ public class CombatManager {
         
         behaviorTracker.recordAttack();
         
+        resetLastCombatValues();
+        
         int d20 = dice.roll(20);
         lastD20Roll = d20;
         int totalAttack = d20 + hero.getAttackBonus() + hero.getTemporaryAttackBonus();
@@ -62,6 +64,8 @@ public class CombatManager {
     }
     
     public void heroSpecialAttack(Hero hero, Monster monster) {
+        
+        resetLastCombatValues();
 
         if (!monster.isAlive()) {
             return;
@@ -112,11 +116,13 @@ public class CombatManager {
     }
 
     public void monsterAttack(
-         Monster monster,
-         Hero hero,
-         boolean adaptiveAIEnabled,
-         boolean bossRageModeEnabled,
-         boolean doubleDiceEnabled){
+        Monster monster,
+        Hero hero,
+        boolean adaptiveAIEnabled,
+        boolean bossRageModeEnabled,
+        boolean doubleDiceEnabled){
+        
+        resetLastCombatValues();
         
         if (!monster.isAlive()) {
             System.out.println(monster.getName() + " cannot attack because it is defeated.");
@@ -195,6 +201,23 @@ public class CombatManager {
                         + dragonDamage
                         + " extra damage.");
             }
+            
+            if (bossRageModeEnabled
+                && monster.getMonsterType() == MonsterType.ANCIENT_SHADOW_DRAGON
+                && monster.getCurrentHealth() < monster.getMaxHealth() / 2) {
+
+                int rageDamage = dice.roll(8);
+
+                damage += rageDamage;
+
+                System.out.println(
+                        "Boss Rage Mode activated! "
+                        + monster.getName()
+                        + " adds "
+                        + rageDamage
+                        + " rage damage."
+                );
+            }
 
             if (d20 == 20) {
 
@@ -251,5 +274,11 @@ public class CombatManager {
     public void recordDefendUse() {
         
         behaviorTracker.recordDefendUse();
+    }
+    
+    private void resetLastCombatValues() {
+        
+        lastD20Roll = 0;
+        lastDamageRoll = 0;
     }
 }
