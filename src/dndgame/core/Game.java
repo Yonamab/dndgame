@@ -9,10 +9,6 @@
  * This class is part of the Roll of Fate application.
  */
 package dndgame.core;
-
-import dndgame.core.GameRules;
-import dndgame.core.Room;
-import dndgame.core.Dice;
 import dndgame.characters.Mage;
 import dndgame.characters.Monster;
 import dndgame.characters.Hero;
@@ -306,6 +302,7 @@ public class Game {
     }
 
     public void usePotion(Potion potion) {
+        
         clearMessage();
 
         if (potion == null) {

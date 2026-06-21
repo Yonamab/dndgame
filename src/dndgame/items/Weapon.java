@@ -10,8 +10,6 @@
  */
 package dndgame.items;
 
-import dndgame.items.Item;
-
 public abstract class Weapon extends Item {
 
     private int damageBonus;
