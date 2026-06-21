@@ -1,4 +1,4 @@
-/**
+/*
  * Project: Roll of Fate
  * Author: Yonathan Abaineh Munshea
  * Course: Object Oriented Programming
@@ -6,13 +6,12 @@
  * Date: [Submission Date]
  *
  * Description:
- * This class represents an enemy monster in the game.
- * It extends Character and adds damage dice and attack bonus.
+ * This class is part of the Roll of Fate application.
  */
 package dndgame.characters;
 
-import dndgame.characters.Character;
 import dndgame.combat.MonsterPersonality;
+import dndgame.combat.MonsterAttackBehavior;
 import dndgame.factory.MonsterType;
 
 public class Monster extends Character {
@@ -20,6 +19,8 @@ public class Monster extends Character {
     private int damageDie;
     private MonsterPersonality personality;
     private MonsterType monsterType;
+    private MonsterAttackBehavior attackBehavior;
+    
     public Monster(MonsterType monsterType,
                 String name,
                 int maxHealth,
@@ -32,7 +33,7 @@ public class Monster extends Character {
     this.damageDie = damageDie;
     this.personality = personality;
     this.monsterType = monsterType;
-    
+    this.attackBehavior = null;
     }
 
     public int getDamageDie() {
@@ -45,6 +46,14 @@ public class Monster extends Character {
 
     public MonsterPersonality getPersonality() {
         return personality;
+    }
+    
+    public void setAttackBehavior(MonsterAttackBehavior behavior) {
+        this.attackBehavior = behavior;
+    }
+    
+    public MonsterAttackBehavior getAttackBehavior() {
+        return attackBehavior;
     }
     
 }

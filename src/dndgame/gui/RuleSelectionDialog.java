@@ -6,7 +6,7 @@
  * Date: [Submission Date]
  *
  * Description:
- * This class displays the custom rule selection dialog.
+ * This class is part of the Roll of Fate application.
  */
 package dndgame.gui;
 

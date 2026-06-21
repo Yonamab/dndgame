@@ -6,12 +6,11 @@
  * Date: [Submission Date]
  *
  * Description:
- * Healing potion restores hero health.
+ * This class is part of the Roll of Fate application.
  */
 package dndgame.items;
 
 import dndgame.characters.Hero;
-import dndgame.items.Potion;
 
 public class HealingPotion extends Potion {
 

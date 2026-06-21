@@ -6,8 +6,7 @@
  * Date: [Submission Date]
  *
  * Description:
- * This class controls adaptive enemy decision-making using weighted rules,
- * monster personality, player behavior, cooldowns, and boss phases.
+ * This class is part of the Roll of Fate application.
  */
 package dndgame.combat;
 

@@ -6,7 +6,7 @@
  * Date: [Submission Date]
  *
  * Description:
- * This class manages GUI game log messages.
+ * This class is part of the Roll of Fate application.
  */
 package dndgame.gui;
 

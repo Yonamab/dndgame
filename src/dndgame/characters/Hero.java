@@ -1,4 +1,4 @@
-/**
+/*
  * Project: Roll of Fate
  * Author: Yonathan Abaineh Munshea
  * Course: Object Oriented Programming
@@ -6,16 +6,16 @@
  * Date: [Submission Date]
  *
  * Description:
- * This class represents the player-controlled hero.
- * It extends Character and provides common hero features.
+ * This class is part of the Roll of Fate application.
  */
 package dndgame.characters;
 
 import dndgame.core.Dice;
-import dndgame.characters.Character;
 import dndgame.items.Weapon;
 import dndgame.items.Inventory;
 import dndgame.effects.StatusEffect;
+import dndgame.combat.AttackStrategy;
+import dndgame.combat.SpecialAttackStrategy;
 import java.util.ArrayList;
 
 public class Hero extends Character {
@@ -28,6 +28,8 @@ public class Hero extends Character {
     
     private Inventory inventory;
     private Weapon equippedWeapon;
+    private AttackStrategy attackStrategy;
+    private SpecialAttackStrategy specialAttackStrategy;
  
     private boolean defending;
     private ArrayList<StatusEffect> statusEffects;
@@ -42,6 +44,8 @@ public class Hero extends Character {
         this.defending = false;
         this.statusEffects = new ArrayList<>();
         this.inventory = new Inventory();
+        this.attackStrategy = null;
+        this.specialAttackStrategy = null;
     }
 
     public int getLevel() {
@@ -66,19 +70,17 @@ public class Hero extends Character {
     }
 
     public int attack(Dice dice) {
-        
-        int weaponDamage = 0;
-
-        if (equippedWeapon != null) {
-            weaponDamage = equippedWeapon.getDamageBonus();
+        if (attackStrategy == null) {
+            throw new IllegalStateException("Attack strategy not set for " + getName());
         }
-
-        return dice.roll(8) + getDamageBonus() + weaponDamage;
+        return attackStrategy.calculateDamage(dice, getDamageBonus(), equippedWeapon);
     }
     
     public int specialAttack(Dice dice) {
-        
-        return attack(dice) + getTemporaryDamageBonus();
+        if (specialAttackStrategy == null) {
+            throw new IllegalStateException("Special attack strategy not set for " + getName());
+        }
+        return specialAttackStrategy.calculateDamage(dice, this);
     }
     
     public Inventory getInventory() {
@@ -103,6 +105,13 @@ public class Hero extends Character {
     
     public Weapon getEquippedWeapon() {
         return equippedWeapon;
+    }
+    
+    public int getEquippedWeaponDamage() {
+        if (equippedWeapon == null) {
+            return 0;
+        }
+        return equippedWeapon.getDamageBonus();
     }
 
     public void setEquippedWeapon(Weapon equippedWeapon) {
@@ -171,24 +180,32 @@ public class Hero extends Character {
             return "None";
         }
 
-        StringBuilder builder = new StringBuilder();
+        ArrayList<String> parts = new ArrayList<>();
 
         for (StatusEffect effect : statusEffects) {
-
-            builder.append(effect.getName())
-                   .append(" [")
-                   .append(effect.getDuration())
-                   .append(" turns]")
-                   .append("<br>");
-
+            parts.add(effect.getName() + " [" + effect.getDuration() + " turns]");
         }
 
-        return builder.toString();
+        return String.join(", ", parts);
+    }
+
+    public boolean hasActiveStatusEffects() {
+        return !statusEffects.isEmpty();
     }
     
     public String getSpecialAttackName() {
+        if (specialAttackStrategy == null) {
+            return "Strike of Doom";
+        }
+        return specialAttackStrategy.getSpecialAttackName();
+    }
     
-        return "Strike of Doom";
+    protected void setAttackStrategy(AttackStrategy strategy) {
+        this.attackStrategy = strategy;
+    }
+    
+    protected void setSpecialAttackStrategy(SpecialAttackStrategy strategy) {
+        this.specialAttackStrategy = strategy;
     }
     
     public void defend() {

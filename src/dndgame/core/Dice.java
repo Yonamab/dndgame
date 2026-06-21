@@ -1,4 +1,4 @@
-/**
+/*
  * Project: Roll of Fate
  * Author: Yonathan Abaineh Munshea
  * Course: Object Oriented Programming
@@ -6,8 +6,7 @@
  * Date: [Submission Date]
  *
  * Description:
- * This class represents dice rolling behavior for the game.
- * It is used for attack rolls, damage rolls, healing, and random events.
+ * This class is part of the Roll of Fate application.
  */
 package dndgame.core;
 

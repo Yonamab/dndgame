@@ -6,7 +6,7 @@
  * Date: [Submission Date]
  *
  * Description:
- * This class creates and scales monsters for dungeon rooms.
+ * This class is part of the Roll of Fate application.
  */
 package dndgame.factory;
 
@@ -14,8 +14,14 @@ import dndgame.core.Dice;
 import dndgame.characters.Hero;
 import dndgame.characters.Monster;
 import dndgame.combat.MonsterPersonality;
+import dndgame.combat.StandardMonsterAttackBehavior;
+import dndgame.combat.DragonAttackBehavior;
 
 public class MonsterFactory {
+
+    private static int boost(int value) {
+        return (int) Math.round(value * 1.10);
+    }
 
     public static Monster createMonster(int roomNumber, Hero hero) {
 
@@ -32,82 +38,95 @@ public class MonsterFactory {
                 + playerPower * 2;
 
         int monsterType = dice.roll(5);
+        
+        Monster monster = null;
 
         switch (monsterType) {
 
             case 1:
-                return new Monster(
+                monster = new Monster(
                         MonsterType.GOBLIN_SCOUT,
                         "Goblin Scout",
-                        35 + scalingHP,
-                        12 + roomNumber / 3,
-                        3 + roomNumber / 4,
-                        2 + roomNumber / 5,
+                        boost(35 + scalingHP),
+                        boost(12 + roomNumber / 3),
+                        boost(3 + roomNumber / 4),
+                        boost(2 + roomNumber / 5),
                         6,
                         MonsterPersonality.COWARDLY
                 );
+                break;
 
             case 2:
-                return new Monster(
+                monster = new Monster(
                         MonsterType.SKELETON_KNIGHT,
                         "Skeleton Knight",
-                        50 + scalingHP,
-                        14 + roomNumber / 3,
-                        4 + roomNumber / 4,
-                        3 + roomNumber / 5,
+                        boost(50 + scalingHP),
+                        boost(14 + roomNumber / 3),
+                        boost(4 + roomNumber / 4),
+                        boost(3 + roomNumber / 5),
                         8,
                         MonsterPersonality.SIMPLE
                 );
+                break;
 
             case 3:
-                return new Monster(
+                monster = new Monster(
                         MonsterType.CAVE_TROLL,
                         "Cave Troll",
-                        75 + scalingHP,
-                        13 + roomNumber / 3,
-                        5 + roomNumber / 4,
-                        4 + roomNumber / 5,
+                        boost(75 + scalingHP),
+                        boost(13 + roomNumber / 3),
+                        boost(5 + roomNumber / 4),
+                        boost(4 + roomNumber / 5),
                         10,
                         MonsterPersonality.AGGRESSIVE
                 );
+                break;
 
             case 4:
-                return new Monster(
+                monster = new Monster(
                         MonsterType.DARK_SORCERER,
                         "Dark Sorcerer",
-                        55 + scalingHP,
-                        15 + roomNumber / 3,
-                        5 + roomNumber / 4,
-                        4 + roomNumber / 5,
+                        boost(55 + scalingHP),
+                        boost(15 + roomNumber / 3),
+                        boost(5 + roomNumber / 4),
+                        boost(4 + roomNumber / 5),
                         8,
                         MonsterPersonality.STRATEGIC
                 );
+                break;
 
             default:
-                return new Monster(
+                monster = new Monster(
                         MonsterType.DIRE_WOLF_ALPHA,
                         "Dire Wolf Alpha",
-                        60 + scalingHP,
-                        14 + roomNumber / 3,
-                        6 + roomNumber / 4,
-                        3 + roomNumber / 5,
+                        boost(60 + scalingHP),
+                        boost(14 + roomNumber / 3),
+                        boost(6 + roomNumber / 4),
+                        boost(3 + roomNumber / 5),
                         8,
                         MonsterPersonality.AGGRESSIVE
                 );
+                break;
         }
+        
+        monster.setAttackBehavior(new StandardMonsterAttackBehavior());
+        return monster;
     }
 
     public static Monster createBoss(Hero hero) {
 
-        return new Monster(
+        Monster boss = new Monster(
                 MonsterType.ANCIENT_SHADOW_DRAGON,
                 "Ancient Shadow Dragon",
-                180 + hero.getLevel() * 20,
-                18,
-                7 + hero.getLevel() / 2,
-                6 + hero.getLevel(),
+                boost(180 + hero.getLevel() * 20),
+                boost(18),
+                boost(7 + hero.getLevel() / 2),
+                boost(6 + hero.getLevel()),
                 12,
                 MonsterPersonality.STRATEGIC
         );
+        
+        boss.setAttackBehavior(new DragonAttackBehavior());
+        return boss;
     }
 }

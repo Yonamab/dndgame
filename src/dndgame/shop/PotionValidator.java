@@ -6,13 +6,18 @@
  * Date: [Submission Date]
  *
  * Description:
- * This interface represents objects that can be used by a hero.
+ * This interface defines behavior used by the Roll of Fate application.
  */
-package dndgame.interfaces;
+package dndgame.shop;
 
 import dndgame.characters.Hero;
 
-public interface Usable {
+public interface PotionValidator {
+    
 
-    void use(Hero hero);
+    boolean canUse(Hero hero);
+    
+    
+
+    String getErrorMessage();
 }

@@ -6,13 +6,12 @@
  * Date: [Submission Date]
  *
  * Description:
- * This potion gives the hero a temporary damage bonus.
+ * This class is part of the Roll of Fate application.
  */
 package dndgame.items;
 
 import dndgame.characters.Hero;
 import dndgame.characters.Rogue;
-import dndgame.items.Potion;
 import dndgame.effects.ShadowEffect;
 
 public class ShadowPotion extends Potion {

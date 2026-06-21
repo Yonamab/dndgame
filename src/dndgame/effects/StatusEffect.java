@@ -6,8 +6,7 @@
  * Date: [Submission Date]
  *
  * Description:
- * This abstract class represents a temporary status effect
- * that can affect a hero during gameplay.
+ * This class is part of the Roll of Fate application.
  */
 package dndgame.effects;
 

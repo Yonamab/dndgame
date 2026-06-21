@@ -1,4 +1,4 @@
-/**
+/*
  * Project: Roll of Fate
  * Author: Yonathan Abaineh Munshea
  * Course: Object Oriented Programming
@@ -6,7 +6,7 @@
  * Date: [Submission Date]
  *
  * Description:
- * This class represents a basic item in the game.
+ * This class is part of the Roll of Fate application.
  */
 package dndgame.items;
 

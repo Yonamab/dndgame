@@ -6,12 +6,11 @@
  * Date: [Submission Date]
  *
  * Description:
- * This class creates the graphical user interface for the game.
+ * This class is part of the Roll of Fate application.
  */
 package dndgame.gui;
 
 import dndgame.core.Game;
-import dndgame.core.GameRules;
 import dndgame.core.Room;
 import dndgame.characters.Mage;
 import dndgame.characters.Warrior;
@@ -19,7 +18,6 @@ import dndgame.characters.Rogue;
 import dndgame.characters.Monster;
 import dndgame.characters.Hero;
 import dndgame.characters.Archer;
-import dndgame.shop.Shop;
 import dndgame.factory.MonsterType;
 import dndgame.items.Potion;
 import javax.swing.*;
@@ -346,7 +344,6 @@ public class GameWindow extends JFrame {
                 break;
         }
 
-
         game = new Game(hero);
         
         RuleSelectionDialog.show(
@@ -396,8 +393,7 @@ public class GameWindow extends JFrame {
 
         specialAttackReady = true;
 
-        if (!game.isGameWon()
-                && game.getHero().isAlive()
+        if (game.getHero().isAlive()
                 && game.getCurrentRoom().hasMonster()
                 && game.getCurrentRoom().getMonster().isAlive()) {
 
@@ -435,8 +431,7 @@ public class GameWindow extends JFrame {
 
         specialAttackReady = false;
 
-        if (!game.isGameWon()
-                && game.getHero().isAlive()
+        if (game.getHero().isAlive()
                 && game.getCurrentRoom().hasMonster()
                 && game.getCurrentRoom().getMonster().isAlive()) {
 
@@ -794,18 +789,7 @@ public class GameWindow extends JFrame {
         return;
     }
 
-    if (game.isGameWon()) {
-
-            setGameButtonsEnabled(false);
-
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Victory! You defeated the boss."
-            );
-
-            cardLayout.show(rootPanel, "START");
-            return;
-        }
+   
     }
  
     private void setGameButtonsEnabled(boolean enabled) {
@@ -835,8 +819,7 @@ public class GameWindow extends JFrame {
 
         logger.log("Defending helped you regain focus. Special Attack is ready.\n");
 
-        if (!game.isGameWon()
-                && game.getHero().isAlive()
+        if (game.getHero().isAlive()
                 && game.getCurrentRoom().hasMonster()
                 && game.getCurrentRoom().getMonster().isAlive()) {
 

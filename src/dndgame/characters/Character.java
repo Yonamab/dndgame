@@ -1,13 +1,12 @@
-/**
- * Project: Role of Fate
+/*
+ * Project: Roll of Fate
  * Author: Yonathan Abaineh Munshea
  * Course: Object Oriented Programming
  * Instructor: Prof. Salvatore Distefano
- * Date: [Submission Dat]
+ * Date: [Submission Date]
  *
  * Description:
- * This class represents a base character in the game.
- * It stores common attributes such as name, health, and armor.
+ * This class is part of the Roll of Fate application.
  */
 package dndgame.characters;
 
@@ -40,13 +39,14 @@ public class Character {
     public int getArmorClass() {
         return armorClass;
     }
-
     public int getAttackBonus() {
         return attackBonus;
     }
-    public void increaseAttackBonus() {
-    attackBonus++;
+
+    protected void increaseAttackBonus() {
+        attackBonus++;
     }
+
     public int getDamageBonus() {
         return damageBonus;
     }

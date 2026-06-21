@@ -6,15 +6,12 @@
  * Date: [Submission Date]
  *
  * Description:
- * This enum defines values used by the Roll of Fate application.
+ * This interface defines behavior used by the Roll of Fate application.
  */
-package dndgame.combat;
+package dndgame.effects;
 
-public enum MonsterPersonality {
+public interface AttackBonusEffect {
+    
 
-    AGGRESSIVE,
-    DEFENSIVE,
-    COWARDLY,
-    STRATEGIC,
-    SIMPLE
+    int getAttackBonus();
 }

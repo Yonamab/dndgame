@@ -1,4 +1,4 @@
-/**
+/*
  * Project: Roll of Fate
  * Author: Yonathan Abaineh Munshea
  * Course: Object Oriented Programming
@@ -6,14 +6,13 @@
  * Date: [Submission Date]
  *
  * Description:
- * This class represents the Mage hero type.
- * Mage has lower health but higher magical damage.
+ * This class is part of the Roll of Fate application.
  */
 package dndgame.characters;
 
-import dndgame.core.Dice;
-import dndgame.characters.Hero;
 import dndgame.items.Staff;
+import dndgame.combat.StandardD10AttackStrategy;
+import dndgame.combat.MageSpecialAttackStrategy;
 
 public class Mage extends Hero {
     
@@ -25,38 +24,8 @@ public class Mage extends Hero {
         setEquippedWeapon(new Staff());
         this.maxMana = 120;
         this.currentMana = 120;
-    }
-
-    @Override
-    public int attack(Dice dice) {
-        
-        return dice.roll(10) + getDamageBonus() + getEquippedWeapon().getDamageBonus();
-    }
-    
-    @Override
-    public int specialAttack(Dice dice) {
-
-        if (!useMana(30)) {
-
-            System.out.println(
-                    getName()
-                    + " does not have enough mana."
-            );
-
-            return 0;
-        }
-        
-        int damage =
-                attack(dice)
-                + 18
-                + getTemporaryDamageBonus();
-
-        System.out.println(
-                getName()
-                + " used Arcane Burst!"
-        );
-
-        return damage;
+        setAttackStrategy(new StandardD10AttackStrategy());
+        setSpecialAttackStrategy(new MageSpecialAttackStrategy(new StandardD10AttackStrategy()));
     }
     
     public int getMaxMana() {
@@ -72,7 +41,6 @@ public class Mage extends Hero {
     }
 
     public void restoreMana(int amount) {
-
         currentMana += amount;
 
         if (currentMana > maxMana) {
@@ -81,7 +49,6 @@ public class Mage extends Hero {
     }
 
     public boolean useMana(int amount) {
-
         if (currentMana < amount) {
             return false;
         }
@@ -89,7 +56,7 @@ public class Mage extends Hero {
         currentMana -= amount;
         return true;
     }
-    
+
     @Override
     public String getSpecialAttackName() {
         return "Arcane Burst";

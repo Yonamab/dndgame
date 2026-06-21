@@ -6,26 +6,27 @@
  * Date: [Submission Date]
  *
  * Description:
- * This status effect increases the hero's armor temporarily.
+ * This class is part of the Roll of Fate application.
  */
 package dndgame.effects;
 
-import dndgame.effects.StatusEffect;
-
-public class DefenseEffect extends StatusEffect {
+public class DefenseEffect extends StatusEffect implements ArmorBonusEffect {
 
     public DefenseEffect() {
         super("Defense", 3);
     }
 
+    @Override
     public int getAttackBonus() {
         return 0;
     }
 
+    @Override
     public int getDamageBonus() {
         return 0;
     }
 
+    @Override
     public int getArmorBonus() {
         return 3;
     }

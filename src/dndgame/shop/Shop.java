@@ -6,7 +6,7 @@
  * Date: [Submission Date]
  *
  * Description:
- * This class represents the shop where the hero can buy items.
+ * This class is part of the Roll of Fate application.
  */
 package dndgame.shop;
 
@@ -17,17 +17,55 @@ import dndgame.items.ShadowPotion;
 import dndgame.items.FocusPotion;
 import dndgame.items.ManaPotion;
 import dndgame.items.HealingPotion;
-
+import java.util.HashMap;
+import java.util.Map;
 
 public class Shop {
 
-    public static final int HEALING_POTION_COST = 20;
-    public static final int MANA_POTION_COST = 20;
-    public static final int FOCUS_POTION_COST = 30;
-    public static final int SHADOW_POTION_COST = 30;
-    public static final int DEFENSE_POTION_COST = 25;
-    public static final int WEAPON_UPGRADE_COST = 60;
-    public static final int ARMOR_UPGRADE_COST = 60;
+    private static final int HEALING_POTION_COST = 20;
+    private static final int MANA_POTION_COST = 20;
+    private static final int FOCUS_POTION_COST = 30;
+    private static final int SHADOW_POTION_COST = 30;
+    private static final int DEFENSE_POTION_COST = 25;
+    private static final int WEAPON_UPGRADE_COST = 60;
+    private static final int ARMOR_UPGRADE_COST = 60;
+    
+    private static final Map<String, PotionValidator> validators = new HashMap<>();
+    
+    static {
+        validators.put("mana", new MageOnlyValidator());
+        validators.put("focus", new ArcherOnlyValidator());
+        validators.put("shadow", new RogueOnlyValidator());
+        validators.put("defense", new WarriorOnlyValidator());
+    }
+
+    public static int getHealingPotionCost() {
+        return HEALING_POTION_COST;
+    }
+
+    public static int getManaPotionCost() {
+        return MANA_POTION_COST;
+    }
+
+    public static int getFocusPotionCost() {
+        return FOCUS_POTION_COST;
+    }
+
+    public static int getShadowPotionCost() {
+        return SHADOW_POTION_COST;
+    }
+
+    public static int getDefensePotionCost() {
+        return DEFENSE_POTION_COST;
+    }
+
+    public static int getWeaponUpgradeCost() {
+        return WEAPON_UPGRADE_COST;
+    }
+
+    public static int getArmorUpgradeCost() {
+        return ARMOR_UPGRADE_COST;
+    }
     
     public void buyHealingPotion(Hero hero) {
 
@@ -59,42 +97,29 @@ public class Shop {
     }
     
     public void buyManaPotion(Hero hero) {
-        
-       if (!(hero instanceof Mage)) {
-           throw new IllegalStateException("Only Mages can buy Mana Potions.");
-       }
-
-       hero.spendGold(MANA_POTION_COST);
-       hero.getInventory().addItem(new ManaPotion());
-   }
+        validateAndBuyPotion(hero, "mana", new ManaPotion(), MANA_POTION_COST);
+    }
 
     public void buyFocusPotion(Hero hero) {
-        
-        if (!(hero instanceof Archer)) {
-            throw new IllegalStateException("Only Archers can buy Focus Potions.");
-        }
-
-        hero.spendGold(FOCUS_POTION_COST);
-        hero.getInventory().addItem(new FocusPotion());
+        validateAndBuyPotion(hero, "focus", new FocusPotion(), FOCUS_POTION_COST);
     }
 
     public void buyShadowPotion(Hero hero) {
-        
-        if (!(hero instanceof Rogue)) {
-            throw new IllegalStateException("Only Rogues can buy Shadow Potions.");
-        }
-
-        hero.spendGold(SHADOW_POTION_COST);
-        hero.getInventory().addItem(new ShadowPotion());
+        validateAndBuyPotion(hero, "shadow", new ShadowPotion(), SHADOW_POTION_COST);
     }
 
     public void buyDefensePotion(Hero hero) {
+        validateAndBuyPotion(hero, "defense", new DefensePotion(), DEFENSE_POTION_COST);
+    }
+    
+    private void validateAndBuyPotion(Hero hero, String potionType, dndgame.items.Item potion, int cost) {
+        PotionValidator validator = validators.get(potionType);
         
-        if (!(hero instanceof Warrior)) {
-            throw new IllegalStateException("Only Warriors can buy Defense Potions.");
+        if (validator != null && !validator.canUse(hero)) {
+            throw new IllegalStateException(validator.getErrorMessage());
         }
-
-        hero.spendGold(DEFENSE_POTION_COST);
-        hero.getInventory().addItem(new DefensePotion());
+        
+        hero.spendGold(cost);
+        hero.getInventory().addItem(potion);
     }
 }

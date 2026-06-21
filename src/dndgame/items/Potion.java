@@ -6,12 +6,9 @@
  * Date: [Submission Date]
  *
  * Description:
- * Abstract base class for all potion items.
+ * This class is part of the Roll of Fate application.
  */
 package dndgame.items;
-
-import dndgame.items.Item;
-import dndgame.interfaces.Usable;
 
 public abstract class Potion extends Item implements Usable {
 

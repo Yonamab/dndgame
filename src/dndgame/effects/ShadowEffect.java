@@ -6,26 +6,26 @@
  * Date: [Submission Date]
  *
  * Description:
- * This status effect increases the hero's damage temporarily.
+ * This class is part of the Roll of Fate application.
  */
 package dndgame.effects;
-
-import dndgame.effects.StatusEffect;
-
-public class ShadowEffect extends StatusEffect {
+public class ShadowEffect extends StatusEffect implements DamageBonusEffect {
 
     public ShadowEffect() {
         super("Shadow Power", 3);
     }
 
+    @Override
     public int getAttackBonus() {
         return 0;
     }
 
+    @Override
     public int getDamageBonus() {
         return 4;
     }
 
+    @Override
     public int getArmorBonus() {
         return 0;
     }

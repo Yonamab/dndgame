@@ -6,7 +6,7 @@
  * Date: [Submission Date]
  *
  * Description:
- * This class centralizes reusable GUI styling methods.
+ * This class is part of the Roll of Fate application.
  */
 package dndgame.gui;
 
@@ -24,11 +24,11 @@ public class UIStyle {
         panel.setBorder(new CompoundBorder(
             new TitledBorder(
                 new LineBorder(new Color(180, 140, 60), 2),
-                title, //--
+                title,
                 TitledBorder.CENTER,
                 TitledBorder.TOP,
                 new Font("Serif", Font.BOLD, 18),
-                new Color(240, 200, 100)), // ----
+                new Color(240, 200, 100)),
             new EmptyBorder(12, 12, 12, 12))
         );
 
@@ -44,7 +44,6 @@ public class UIStyle {
         label.setForeground(Color.WHITE);
         label.setFont(new Font("SansSerif", Font.BOLD, 14));
         label.setBorder(new EmptyBorder(8, 8, 8, 8));
-
 
         return label;
     }

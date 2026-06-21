@@ -1,4 +1,4 @@
-/**
+/*
  * Project: Roll of Fate
  * Author: Yonathan Abaineh Munshea
  * Course: Object Oriented Programming
@@ -6,46 +6,23 @@
  * Date: [Submission Date]
  *
  * Description:
- * This class represents the Warrior hero type.
- * Warrior has high health, strong armor, and reliable melee damage.
+ * This class is part of the Roll of Fate application.
  */
 package dndgame.characters;
 
-import dndgame.core.Dice;
-import dndgame.characters.Hero;
 import dndgame.items.Sword;
+import dndgame.combat.StandardD8AttackStrategy;
+import dndgame.combat.WarriorSpecialAttackStrategy;
 
 public class Warrior extends Hero {
 
     public Warrior(String name) {
-        
-        super(name, 125, 16, 5, 4, 60);
-        
+        super(name, 120, 16, 5, 4, 25);
         setEquippedWeapon(new Sword());
+        setAttackStrategy(new StandardD8AttackStrategy());
+        setSpecialAttackStrategy(new WarriorSpecialAttackStrategy(new StandardD8AttackStrategy()));
     }
 
-    @Override
-    public int attack(Dice dice) {
-        
-        return dice.roll(8) + getDamageBonus() + getEquippedWeapon().getDamageBonus();
-    }
-    
-    @Override
-    public int specialAttack(Dice dice) {
-
-        int damage =
-                attack(dice)
-                + 8
-                + getTemporaryDamageBonus();
-
-        System.out.println(
-                getName()
-                + " used Power Strike!"
-        );
-
-        return damage;
-    }
-    
     @Override
     public String getSpecialAttackName() {
         return "Power Strike";

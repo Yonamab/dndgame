@@ -6,7 +6,7 @@
  * Date: [Submission Date]
  *
  * Description:
- * This enum represents the possible actions an enemy AI can choose.
+ * This enum defines values used by the Roll of Fate application.
  */
 package dndgame.combat;
 

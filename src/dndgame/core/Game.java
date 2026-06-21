@@ -6,8 +6,7 @@
  * Date: [Submission Date]
  *
  * Description:
- * This class manages the main game flow.
- * It connects the hero, room, combat manager, shop, rules, and messages.
+ * This class is part of the Roll of Fate application.
  */
 package dndgame.core;
 
@@ -34,7 +33,7 @@ public class Game {
     
     private int roomNumber;
     private boolean bossUnlocked;
-    private boolean gameWon;
+   
     private boolean gameOver;
     
 
@@ -47,7 +46,6 @@ public class Game {
         this.roomNumber = 1;
         this.currentRoom = createRoom(roomNumber);
         this.bossUnlocked = false;
-        this.gameWon = false;
         this.gameOver = false;
         this.gameRules = new GameRules();
         this.lastGameMessage = "";
@@ -77,11 +75,7 @@ public class Game {
     public boolean isBossUnlocked() {
         return bossUnlocked;
     }
-
-    public boolean isGameWon() {
-        return gameWon;
-    }
-
+    
     public boolean isGameOver() {
         return gameOver;
     }
@@ -135,7 +129,6 @@ public class Game {
         if (!monster.isAlive()) {
 
             if (monster.getMonsterType() == MonsterType.ANCIENT_SHADOW_DRAGON) {
-                gameWon = true;
                 currentRoom.clearRoom();
                 addMessage("Victory! You defeated the Ancient Shadow Dragon.");
                 return;
@@ -190,7 +183,6 @@ public class Game {
         if (!monster.isAlive()) {
 
             if (monster.getMonsterType() == MonsterType.ANCIENT_SHADOW_DRAGON) {
-                gameWon = true;
                 currentRoom.clearRoom();
                 addMessage("Victory! You defeated the Ancient Shadow Dragon.");
                 return;
@@ -235,6 +227,13 @@ public class Game {
                 gameRules.isBossRageModeEnabled(),
                 gameRules.isDoubleDiceEnabled()
         );
+
+        if (gameRules.isAdaptiveAIEnabled()) {
+            dndgame.combat.EnemyAction chosen = combatManager.getLastEnemyAction();
+            if (chosen != null) {
+                addMessage(currentRoom.getMonster().getName() + " chooses: " + chosen + ".");
+            }
+        }
 
         addMessage("Enemy D20 Roll: " + combatManager.getLastD20Roll());
         addMessage("Enemy damage: " + combatManager.getLastDamageRoll());
@@ -311,6 +310,11 @@ public class Game {
 
         if (potion == null) {
             addMessage("No potion selected.");
+            return;
+        }
+
+        if (hero.hasActiveStatusEffects()) {
+            addMessage("You cannot use a potion right now while an effect is active.");
             return;
         }
 

@@ -6,13 +6,12 @@
  * Date: [Submission Date]
  *
  * Description:
- * This potion restores mana for magical heroes.
+ * This class is part of the Roll of Fate application.
  */
 package dndgame.items;
 
 import dndgame.characters.Hero;
 import dndgame.characters.Mage;
-import dndgame.items.Potion;
 
 public class ManaPotion extends Potion {
 

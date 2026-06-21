@@ -1,4 +1,4 @@
-/**
+/*
  * Project: Roll of Fate
  * Author: Yonathan Abaineh Munshea
  * Course: Object Oriented Programming
@@ -6,8 +6,7 @@
  * Date: [Submission Date]
  *
  * Description:
- * This class represents a dungeon room.
- * A room can contain a monster and can be marked as cleared.
+ * This class is part of the Roll of Fate application.
  */
 package dndgame.core;
 

@@ -6,13 +6,12 @@
  * Date: [Submission Date]
  *
  * Description:
- * This potion gives the hero a temporary armor bonus.
+ * This class is part of the Roll of Fate application.
  */
 package dndgame.items;
 
 import dndgame.characters.Hero;
 import dndgame.characters.Warrior;
-import dndgame.items.Potion;
 import dndgame.effects.DefenseEffect;
 
 public class DefensePotion extends Potion {

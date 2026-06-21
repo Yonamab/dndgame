@@ -6,7 +6,7 @@
  * Date: [Submission Date]
  *
  * Description:
- * Abstract base class for all weapons.
+ * This class is part of the Roll of Fate application.
  */
 package dndgame.items;
 

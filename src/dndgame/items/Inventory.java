@@ -1,4 +1,4 @@
-/**
+/*
  * Project: Roll of Fate
  * Author: Yonathan Abaineh Munshea
  * Course: Object Oriented Programming
@@ -6,12 +6,12 @@
  * Date: [Submission Date]
  *
  * Description:
- * This class stores and manages the hero's items.
+ * This class is part of the Roll of Fate application.
  */
 package dndgame.items;
-
-import dndgame.items.Item;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class Inventory {
 
@@ -29,15 +29,8 @@ public class Inventory {
         return items.size();
     }
 
-    public void showItems() {
-        if (items.isEmpty()) {
-            System.out.println("Inventory is empty.");
-            return;
-        }
-
-        for (Item item : items) {
-            System.out.println("- " + item.getName());
-        }
+    public List<Item> getItems() {
+        return Collections.unmodifiableList(items);
     }
 
     public Potion getPotion() {
@@ -55,6 +48,8 @@ public class Inventory {
         items.remove(item);
     }
     
+    
+
     public Potion getPotionAt(int potionIndex) {
         int count = 0;
 
@@ -70,9 +65,10 @@ public class Inventory {
         return null;
     }
     
+    
+
     public String[] getPotionNames() {
-        
-        java.util.ArrayList<String> names = new java.util.ArrayList<>();
+        ArrayList<String> names = new ArrayList<>();
 
         for (Item item : items) {
             if (item instanceof Potion) {
@@ -81,5 +77,16 @@ public class Inventory {
         }
 
         return names.toArray(new String[0]);
+    }
+    
+    
+
+    public boolean hasPotions() {
+        for (Item item : items) {
+            if (item instanceof Potion) {
+                return true;
+            }
+        }
+        return false;
     }
 }

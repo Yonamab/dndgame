@@ -6,8 +6,7 @@
  * Date: [Submission Date]
  *
  * Description:
- * This class tracks the player's behavior during gameplay.
- * The enemy AI can use this information to make smarter decisions.
+ * This class is part of the Roll of Fate application.
  */
 package dndgame.combat;
 

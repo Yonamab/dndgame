@@ -6,13 +6,12 @@
  * Date: [Submission Date]
  *
  * Description:
- * This potion gives the hero a temporary attack bonus.
+ * This class is part of the Roll of Fate application.
  */
 package dndgame.items;
 
 import dndgame.characters.Archer;
 import dndgame.characters.Hero;
-import dndgame.items.Potion;
 import dndgame.effects.FocusEffect;
 
 public class FocusPotion extends Potion {

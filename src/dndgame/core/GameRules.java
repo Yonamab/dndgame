@@ -6,7 +6,7 @@
  * Date: [Submission Date]
  *
  * Description:
- * Stores customizable gameplay rules.
+ * This class is part of the Roll of Fate application.
  */
 package dndgame.core;
 

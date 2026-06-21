@@ -6,7 +6,7 @@
  * Date: [Submission Date]
  *
  * Description:
- * This class displays the shop dialog and returns the player's shop choice.
+ * This class is part of the Roll of Fate application.
  */
 package dndgame.gui;
 
@@ -22,13 +22,13 @@ public class ShopDialog {
     {
 
         String[] options = {
-                "Healing Potion - " + Shop.HEALING_POTION_COST + " gold",
-                "Mana Potion - " + Shop.MANA_POTION_COST + " gold",
-                "Focus Potion - " + Shop.FOCUS_POTION_COST + " gold",
-                "Shadow Potion - " + Shop.SHADOW_POTION_COST + " gold",
-                "Defense Potion - " + Shop.DEFENSE_POTION_COST + " gold",
-                "Weapon Upgrade - " + Shop.WEAPON_UPGRADE_COST + " gold",
-                "Armor Upgrade - " + Shop.ARMOR_UPGRADE_COST + " gold",
+                "Healing Potion - " + Shop.getHealingPotionCost() + " gold",
+                "Mana Potion - " + Shop.getManaPotionCost() + " gold",
+                "Focus Potion - " + Shop.getFocusPotionCost() + " gold",
+                "Shadow Potion - " + Shop.getShadowPotionCost() + " gold",
+                "Defense Potion - " + Shop.getDefensePotionCost() + " gold",
+                "Weapon Upgrade - " + Shop.getWeaponUpgradeCost() + " gold",
+                "Armor Upgrade - " + Shop.getArmorUpgradeCost() + " gold",
                 "Cancel"
         };
 

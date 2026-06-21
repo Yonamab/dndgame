@@ -6,9 +6,8 @@
  * Date: [Submission Date]
  *
  * Description:
- * This enum represents types of monster.
+ * This enum defines values used by the Roll of Fate application.
  */
-
 package dndgame.factory;
 
 public enum MonsterType {

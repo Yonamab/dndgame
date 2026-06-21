@@ -1,4 +1,4 @@
-/**
+/*
  * Project: Roll of Fate
  * Author: Yonathan Abaineh Munshea
  * Course: Object Oriented Programming
@@ -6,8 +6,7 @@
  * Date: [Submission Date]
  *
  * Description:
- * This class manages basic combat between a hero and a monster.
- * It uses dice rolls to decide attacks and damage.
+ * This class is part of the Roll of Fate application.
  */
 package dndgame.combat;
 
@@ -23,6 +22,7 @@ public class CombatManager {
     private PlayerBehaviorTracker behaviorTracker;
     private int lastD20Roll;
     private int lastDamageRoll;
+    private EnemyAction lastEnemyAction;
 
     public CombatManager() {
         dice = new Dice();
@@ -145,6 +145,8 @@ public class CombatManager {
             action = EnemyAction.ATTACK;
         }
 
+        lastEnemyAction = action;
+
         System.out.println(monster.getName() + " chooses: " + action);
 
         if (action == EnemyAction.DEFEND) {
@@ -162,7 +164,7 @@ public class CombatManager {
 
         if (d20 == 20 || totalAttack >= hero.getTotalArmorClass()) {
 
-            int damage = dice.roll(monster.getDamageDie()) + monster.getDamageBonus();
+            int damage = monster.getAttackBehavior().calculateDamage(dice, monster, hero, null);
 
             if (action == EnemyAction.SPECIAL) {
                 
@@ -190,16 +192,6 @@ public class CombatManager {
                         + " uses a special attack and adds "
                         + specialDamage
                         + " damage.");
-            }
-
-            if (monster.getMonsterType() == MonsterType.ANCIENT_SHADOW_DRAGON) {
-                
-                int dragonDamage = dice.roll(12);
-                damage += dragonDamage;
-
-                System.out.println("The dragon breathes shadow fire for "
-                        + dragonDamage
-                        + " extra damage.");
             }
             
             if (bossRageModeEnabled
@@ -261,14 +253,24 @@ public class CombatManager {
     }
     
     
+    
+
     public int getLastD20Roll() {
        
         return lastD20Roll;
         
     }
 
+    
+
     public int getLastDamageRoll() {
         return lastDamageRoll;
+    }
+    
+    
+
+    public EnemyAction getLastEnemyAction() {
+        return lastEnemyAction;
     }
     
     public void recordDefendUse() {
