@@ -10,8 +10,6 @@
  */
 package dndgame.items;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class Inventory {
 
@@ -29,25 +27,9 @@ public class Inventory {
         return items.size();
     }
 
-    public List<Item> getItems() {
-        return Collections.unmodifiableList(items);
-    }
-
-    public Potion getPotion() {
-        
-        for (Item item : items) {
-            if (item instanceof Potion) {
-                return (Potion) item;
-            }
-        }
-
-        return null;
-    }
-
     public void removeItem(Item item) {
         items.remove(item);
     }
-    
     
 
     public Potion getPotionAt(int potionIndex) {
@@ -65,8 +47,6 @@ public class Inventory {
         return null;
     }
     
-    
-
     public String[] getPotionNames() {
         ArrayList<String> names = new ArrayList<>();
 
@@ -77,16 +57,5 @@ public class Inventory {
         }
 
         return names.toArray(new String[0]);
-    }
-    
-    
-
-    public boolean hasPotions() {
-        for (Item item : items) {
-            if (item instanceof Potion) {
-                return true;
-            }
-        }
-        return false;
     }
 }

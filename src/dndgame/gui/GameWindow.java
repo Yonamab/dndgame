@@ -483,8 +483,7 @@ public class GameWindow extends JFrame {
             return;
         }
 
-        Potion selectedPotion =
-                game.getHero().getInventory().getPotionAt(choice);
+        Potion selectedPotion = game.getHero().getInventory().getPotionAt(choice);
 
         game.usePotion(selectedPotion);
 
